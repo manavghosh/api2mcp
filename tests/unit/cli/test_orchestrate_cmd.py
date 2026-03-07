@@ -98,7 +98,7 @@ async def test_orchestrate_reactive_no_api_name_defaults_to_default():
             FakeReactiveGraph,
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(name, "ReactiveGraph", FakeReactiveGraph),
         ),
     ):
@@ -138,7 +138,7 @@ async def test_orchestrate_reactive_with_api_name():
             return_value=_make_registry_mock(),
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(name, "ReactiveGraph", FakeReactiveGraph),
         ),
     ):
@@ -177,7 +177,7 @@ async def test_orchestrate_reactive_server_fallback():
             return_value=_make_registry_mock(),
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(name, "ReactiveGraph", FakeReactiveGraph),
         ),
     ):
@@ -220,7 +220,7 @@ async def test_orchestrate_planner_gets_api_names_list():
             return_value=_make_registry_mock(),
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(name, "PlannerGraph", FakePlannerGraph),
         ),
     ):
@@ -238,6 +238,45 @@ async def test_orchestrate_planner_gets_api_names_list():
         )
 
     assert captured["api_names"] == ["github", "jira"]
+
+
+@pytest.mark.asyncio
+async def test_orchestrate_planner_mode_forwarded():
+    """--mode parallel is forwarded to PlannerGraph as execution_mode."""
+    captured: dict = {}
+
+    class FakePlannerGraph:
+        def __init__(self, model, registry, *, api_names: list, execution_mode: str = "sequential", checkpointer=None, **kw):
+            captured["execution_mode"] = execution_mode
+
+        async def run(self, prompt, *, config=None):
+            return "ok"
+
+    with (
+        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch(
+            "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
+            return_value=_make_registry_mock(),
+        ),
+        patch(
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
+            side_effect=lambda name: _fake_import(name, "PlannerGraph", FakePlannerGraph),
+        ),
+    ):
+        await _run_workflow(
+            prompt="test",
+            graph_type="planner",
+            mode="parallel",
+            model_id="claude-sonnet-4-6",
+            servers={},
+            api_names=("github",),
+            thread_id=None,
+            stream=False,
+            checkpoint_db=None,
+            output_format="text",
+        )
+
+    assert captured["execution_mode"] == "parallel"
 
 
 @pytest.mark.asyncio
@@ -259,7 +298,7 @@ async def test_orchestrate_planner_no_api_names_defaults_to_default():
             return_value=_make_registry_mock(),
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(name, "PlannerGraph", FakePlannerGraph),
         ),
     ):
@@ -302,7 +341,7 @@ async def test_orchestrate_conversational_no_api_names():
             return_value=_make_registry_mock(),
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(
                 name, "ConversationalGraph", FakeConversationalGraph
             ),
@@ -343,7 +382,7 @@ async def test_orchestrate_conversational_with_api_names():
             return_value=_make_registry_mock(),
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(
                 name, "ConversationalGraph", FakeConversationalGraph
             ),
@@ -401,7 +440,7 @@ async def test_orchestrate_registry_is_never_none():
             return_value=fake_registry,
         ),
         patch(
-            "importlib.import_module",
+            "api2mcp.cli.commands.orchestrate.importlib.import_module",
             side_effect=lambda name: _fake_import(name, "ReactiveGraph", FakeReactiveGraph),
         ),
     ):

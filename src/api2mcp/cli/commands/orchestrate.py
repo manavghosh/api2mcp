@@ -1,6 +1,7 @@
 """``api2mcp orchestrate`` — run a LangGraph workflow from the CLI."""
 from __future__ import annotations
 
+import importlib
 import logging
 from typing import Optional
 
@@ -137,7 +138,6 @@ async def _run_workflow(
     """Build and run the requested LangGraph workflow."""
     from api2mcp.cli import output as out
 
-    _ = mode  # used for planner graph selection in future
     _ = stream  # streaming handled by graph run() in future
 
     try:
@@ -172,7 +172,6 @@ async def _run_workflow(
         "conversational": "api2mcp.orchestration.graphs.conversational.ConversationalGraph",
     }
     module_path, class_name = graph_map[graph_type].rsplit(".", 1)
-    import importlib
     mod = importlib.import_module(module_path)
     graph_cls = getattr(mod, class_name)
 
@@ -185,9 +184,9 @@ async def _run_workflow(
         )
         graph = graph_cls(model, registry, api_name=single_api, checkpointer=checkpointer)
     elif graph_type == "planner":
-        # PlannerGraph requires a list of api_names
+        # PlannerGraph requires a list of api_names and an execution mode
         names = list(api_names) if api_names else (list(servers.keys()) or ["default"])
-        graph = graph_cls(model, registry, api_names=names, checkpointer=checkpointer)
+        graph = graph_cls(model, registry, api_names=names, execution_mode=mode, checkpointer=checkpointer)
     else:  # conversational
         names_or_none = list(api_names) if api_names else (list(servers.keys()) or None)
         graph = graph_cls(model, registry, api_names=names_or_none, checkpointer=checkpointer)
