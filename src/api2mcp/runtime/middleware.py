@@ -4,6 +4,7 @@ Provides cross-cutting concerns for tool execution:
 - Logging: Request/response logging with timing
 - Error handling: Catch exceptions and return proper MCP error responses
 - Metrics: Track call counts and latencies
+- Composable middleware layers: pluggable layers for security/performance middleware
 """
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ import logging
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Any, Callable, Awaitable
+from typing import Any, Callable, Awaitable, Protocol, runtime_checkable
 
 from mcp.types import TextContent
 
@@ -21,6 +22,13 @@ logger = logging.getLogger(__name__)
 
 # Type alias for tool call handlers
 ToolHandler = Callable[[str, dict[str, Any] | None], Awaitable[list[TextContent]]]
+
+
+@runtime_checkable
+class MiddlewareLayer(Protocol):
+    """Protocol for objects that can wrap a tool call handler."""
+
+    def wrap(self, handler: ToolHandler) -> ToolHandler: ...
 
 
 @dataclass
@@ -53,9 +61,14 @@ class MiddlewareStack:
         # Use `wrapped` as the call_tool handler
     """
 
-    def __init__(self, *, enable_logging: bool = True, layers: list[Any] | None = None) -> None:
+    def __init__(self, *, enable_logging: bool = True, layers: list[MiddlewareLayer] | None = None) -> None:
         self._enable_logging = enable_logging
-        self._layers: list[Any] = layers or []
+        self._layers: list[MiddlewareLayer] = layers or []
+        for i, layer in enumerate(self._layers):
+            if not callable(getattr(layer, "wrap", None)):
+                raise TypeError(
+                    f"layers[{i}] must expose a wrap() method, got {type(layer)!r}"
+                )
         self.metrics = CallMetrics()
 
     def wrap(self, handler: ToolHandler) -> ToolHandler:
