@@ -160,7 +160,8 @@ class MCPServerRunner:
 
     async def run_async(self) -> None:
         """Run the server asynchronously with the configured transport."""
-        self._shutdown_event = asyncio.Event()
+        if self._shutdown_event is None:
+            self._shutdown_event = asyncio.Event()
 
         if self._pool is not None:
             async with self._pool:

@@ -71,6 +71,11 @@ class MiddlewareStack:
                 )
         self.metrics = CallMetrics()
 
+    @property
+    def layers(self) -> list[MiddlewareLayer]:
+        """Read-only view of the composed middleware layers (outermost-first)."""
+        return list(self._layers)
+
     def wrap(self, handler: ToolHandler) -> ToolHandler:
         """Wrap handler with all layers then logging/error-handling."""
         wrapped: ToolHandler = handler

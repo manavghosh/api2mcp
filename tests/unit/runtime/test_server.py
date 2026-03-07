@@ -178,6 +178,29 @@ class TestExceptions:
 
 
 @pytest.mark.asyncio
+async def test_run_async_starts_and_closes_pool() -> None:
+    """Pool's __aenter__ and __aexit__ are called inside run_async."""
+    from unittest.mock import AsyncMock
+
+    runner = MCPServerRunner.from_api_spec(_simple_api_spec(), _simple_tools())
+
+    mock_pool = AsyncMock()
+    mock_pool.__aenter__ = AsyncMock(return_value=mock_pool)
+    mock_pool.__aexit__ = AsyncMock(return_value=False)
+    runner._pool = mock_pool
+
+    async def _fake_transport() -> None:
+        pass
+
+    runner._run_transport = _fake_transport  # type: ignore[method-assign]
+
+    await runner.run_async()
+
+    mock_pool.__aenter__.assert_awaited_once()
+    mock_pool.__aexit__.assert_awaited_once()
+
+
+@pytest.mark.asyncio
 async def test_execute_tool_applies_auth_headers() -> None:
     """AuthProvider credentials are merged into the outgoing httpx request."""
     from unittest.mock import AsyncMock, MagicMock, patch

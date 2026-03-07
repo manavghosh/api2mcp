@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
 import sys
 from pathlib import Path
-from typing import Any
+from typing import IO, TYPE_CHECKING, Any
 
 import click
 
@@ -14,10 +15,14 @@ from api2mcp.core.exceptions import API2MCPError, ParseException
 from api2mcp.runtime.middleware import MiddlewareStack
 from api2mcp.runtime.transport import TransportConfig
 
+if TYPE_CHECKING:
+    from api2mcp.auth.base import AuthProvider
+    from api2mcp.pool.manager import ConnectionPoolManager
+
 
 def _build_middleware_stack(
     effective: dict[str, Any],
-) -> tuple[MiddlewareStack, Any, Any]:
+) -> tuple[MiddlewareStack, AuthProvider | None, ConnectionPoolManager | None]:
     """Build a :class:`MiddlewareStack`, optional auth provider, and optional pool.
 
     Reads the ``auth``, ``validation``, ``rate_limit``, ``cache``,
@@ -98,7 +103,7 @@ def _check_tls_warning(
     host: str,
     transport: str,
     tls_warning: bool = True,
-    stderr=None,
+    stderr: IO[str] | None = None,
 ) -> None:
     """Print a TLS warning to stderr when serving unencrypted on a public interface."""
     if not tls_warning:
@@ -223,8 +228,6 @@ def serve_cmd(
     # --- Parse spec ---
     with output.spinner("Loading API specification…"):
         try:
-            import asyncio
-
             from api2mcp.parsers.openapi import OpenAPIParser
 
             parser = OpenAPIParser()
@@ -266,8 +269,6 @@ def serve_cmd(
     # --- Start server (normal or hot-reload mode) ---
     if watch:
         output.info("[bold]Hot reload enabled[/bold] — watching for file changes…")
-        import asyncio as _asyncio
-
         from api2mcp.hotreload.restart import HotReloadServer
 
         hot_server = HotReloadServer(
@@ -278,7 +279,7 @@ def serve_cmd(
             port=resolved_port,
         )
         try:
-            _asyncio.run(hot_server.run())
+            asyncio.run(hot_server.run())
         except KeyboardInterrupt:
             output.info("Server stopped.")
         return

@@ -16,7 +16,7 @@ def test_build_middleware_stack_empty_config():
     stack, auth, pool = _build_middleware_stack({})
 
     assert isinstance(stack, MiddlewareStack)
-    assert stack._layers == []
+    assert stack.layers == []
     assert auth is None
     assert pool is None
 
@@ -40,7 +40,7 @@ def test_build_middleware_stack_with_auth_api_key():
     stack, auth, pool = _build_middleware_stack(cfg)
 
     assert isinstance(auth, APIKeyProvider)
-    assert stack._layers == []
+    assert stack.layers == []
     assert pool is None
 
 
@@ -99,8 +99,8 @@ def test_build_middleware_stack_with_validation():
     cfg = {"validation": {"enabled": True}}
     stack, _, _ = _build_middleware_stack(cfg)
 
-    assert len(stack._layers) == 1
-    assert isinstance(stack._layers[0], ValidationMiddleware)
+    assert len(stack.layers) == 1
+    assert isinstance(stack.layers[0], ValidationMiddleware)
 
 
 # ---------------------------------------------------------------------------
@@ -114,8 +114,8 @@ def test_build_middleware_stack_with_rate_limit():
     cfg = {"rate_limit": {"requests_per_second": 10}}
     stack, _, _ = _build_middleware_stack(cfg)
 
-    assert len(stack._layers) == 1
-    assert isinstance(stack._layers[0], RateLimitMiddleware)
+    assert len(stack.layers) == 1
+    assert isinstance(stack.layers[0], RateLimitMiddleware)
 
 
 # ---------------------------------------------------------------------------
@@ -129,8 +129,8 @@ def test_build_middleware_stack_with_cache():
     cfg = {"cache": {"ttl": 300, "backend": "memory"}}
     stack, _, _ = _build_middleware_stack(cfg)
 
-    assert len(stack._layers) == 1
-    assert isinstance(stack._layers[0], CacheMiddleware)
+    assert len(stack.layers) == 1
+    assert isinstance(stack.layers[0], CacheMiddleware)
 
 
 # ---------------------------------------------------------------------------
@@ -144,8 +144,8 @@ def test_build_middleware_stack_with_concurrency():
     cfg = {"concurrency": {"max_concurrent": 50}}
     stack, _, _ = _build_middleware_stack(cfg)
 
-    assert len(stack._layers) == 1
-    assert isinstance(stack._layers[0], ConcurrencyMiddleware)
+    assert len(stack.layers) == 1
+    assert isinstance(stack.layers[0], ConcurrencyMiddleware)
 
 
 # ---------------------------------------------------------------------------
@@ -159,8 +159,8 @@ def test_build_middleware_stack_with_circuit_breaker():
     cfg = {"circuit_breaker": {"failure_threshold": 5}}
     stack, _, _ = _build_middleware_stack(cfg)
 
-    assert len(stack._layers) == 1
-    assert isinstance(stack._layers[0], CircuitBreakerMiddleware)
+    assert len(stack.layers) == 1
+    assert isinstance(stack.layers[0], CircuitBreakerMiddleware)
 
 
 # ---------------------------------------------------------------------------
@@ -175,7 +175,7 @@ def test_build_middleware_stack_with_pool():
     stack, _, pool = _build_middleware_stack(cfg)
 
     assert isinstance(pool, ConnectionPoolManager)
-    assert stack._layers == []
+    assert stack.layers == []
 
 
 # ---------------------------------------------------------------------------
@@ -199,8 +199,8 @@ def test_build_middleware_stack_all_middleware():
     }
     stack, _, _ = _build_middleware_stack(cfg)
 
-    assert len(stack._layers) == 5
-    types = [type(layer) for layer in stack._layers]
+    assert len(stack.layers) == 5
+    types = [type(layer) for layer in stack.layers]
     assert ValidationMiddleware in types
     assert RateLimitMiddleware in types
     assert CacheMiddleware in types
