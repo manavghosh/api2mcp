@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  api2mcp:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./specs:/app/specs:ro
+    environment:
+      - API2MCP_OAUTH2_REDIRECT_URI=${API2MCP_OAUTH2_REDIRECT_URI:-http://localhost:8000/callback}
+    command: ["serve", "/app/specs", "--transport", "http", "--port", "8000"]
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    profiles:
+      - cache
