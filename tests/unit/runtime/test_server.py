@@ -2,7 +2,7 @@
 
 import pytest
 from mcp.server.lowlevel import Server
-from mcp.types import TextContent, Tool
+from typing import Any
 
 from api2mcp.core.ir_schema import (
     APISpec,
@@ -17,7 +17,7 @@ from api2mcp.core.ir_schema import (
 )
 from api2mcp.generators.tool import MCPToolDef
 from api2mcp.runtime.middleware import MiddlewareStack
-from api2mcp.runtime.server import MCPServerRunner, _execute_tool
+from api2mcp.runtime.server import MCPServerRunner
 from api2mcp.runtime.transport import TransportConfig, TransportType
 
 
@@ -205,7 +205,7 @@ async def test_execute_tool_applies_auth_headers() -> None:
     mock_response.headers = {"content-type": "application/json"}
     mock_response.json.return_value = []
 
-    async def fake_request(method: str, path: str, **kwargs: object) -> MagicMock:
+    async def fake_request(method: str, path: str, **kwargs: Any) -> MagicMock:
         captured_headers.update(kwargs.get("headers") or {})
         return mock_response
 
