@@ -286,11 +286,6 @@ def serve_cmd(
     # --- Build middleware stack, auth provider, and connection pool ---
     middleware_stack, auth_provider, pool_manager = _build_middleware_stack(effective)
 
-    if pool_manager is not None:
-        import asyncio as _asyncio_pool  # noqa: PLC0415
-
-        _asyncio_pool.run(pool_manager.start())
-
     from api2mcp.runtime.server import MCPServerRunner  # noqa: PLC0415
 
     runner = MCPServerRunner.from_api_spec(

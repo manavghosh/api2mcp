@@ -162,6 +162,14 @@ class MCPServerRunner:
         """Run the server asynchronously with the configured transport."""
         self._shutdown_event = asyncio.Event()
 
+        if self._pool is not None:
+            async with self._pool:
+                await self._run_transport()
+        else:
+            await self._run_transport()
+
+    async def _run_transport(self) -> None:
+        """Dispatch to the configured transport."""
         if self.config.transport_type == TransportType.STDIO:
             await self._run_stdio()
         elif self.config.transport_type == TransportType.STREAMABLE_HTTP:
