@@ -157,4 +157,4 @@ class TestMiddlewareStackLayers:
     def test_invalid_layer_raises_type_error(self) -> None:
         """A layer without wrap() raises TypeError at construction time."""
         with pytest.raises(TypeError, match="wrap"):
-            MiddlewareStack(layers=[object()])
+            MiddlewareStack(layers=[object()])  # type: ignore[arg-type]
