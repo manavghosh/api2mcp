@@ -18,6 +18,9 @@ from typing import Any, Callable, Awaitable, Protocol, runtime_checkable
 
 from mcp.types import TextContent
 
+from api2mcp.observability.metrics import record_tool_call
+from api2mcp.observability.tracing import span as otel_span
+
 logger = logging.getLogger(__name__)
 
 # Type alias for tool call handlers
@@ -95,11 +98,13 @@ class MiddlewareStack:
                 logger.info("Tool call: %s (args=%s)", name, _summarize_args(arguments))
 
             try:
-                result = await handler(name, arguments)
+                with otel_span(f"tool_call:{name}", tool_name=name):
+                    result = await handler(name, arguments)
             except Exception:
                 self.metrics.error_count += 1
                 elapsed = (time.monotonic() - start) * 1000
                 self.metrics.total_duration_ms += elapsed
+                record_tool_call(name, "local", "error", elapsed)
                 logger.exception("Tool call failed: %s (%.1fms)", name, elapsed)
                 return [
                     TextContent(
@@ -110,6 +115,7 @@ class MiddlewareStack:
 
             elapsed = (time.monotonic() - start) * 1000
             self.metrics.total_duration_ms += elapsed
+            record_tool_call(name, "local", "success", elapsed)
 
             if self._enable_logging:
                 logger.info("Tool call complete: %s (%.1fms)", name, elapsed)

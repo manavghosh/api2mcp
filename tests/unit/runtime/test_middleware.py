@@ -158,3 +158,67 @@ class TestMiddlewareStackLayers:
         """A layer without wrap() raises TypeError at construction time."""
         with pytest.raises(TypeError, match="wrap"):
             MiddlewareStack(layers=[object()])  # type: ignore[arg-type]
+
+
+class TestMiddlewareObservability:
+    @pytest.mark.asyncio
+    async def test_record_tool_call_invoked_on_success(self) -> None:
+        """record_tool_call is called with status='success' on normal execution."""
+        from unittest.mock import patch
+        from mcp.types import TextContent
+
+        async def base(name, args):
+            return [TextContent(type="text", text="ok")]
+
+        stack = MiddlewareStack(enable_logging=False)
+        handler = stack.wrap(base)
+
+        with patch("api2mcp.runtime.middleware.record_tool_call") as mock_record:
+            await handler("my_tool", {})
+
+        mock_record.assert_called_once()
+        call_kwargs = mock_record.call_args
+        assert call_kwargs.args[0] == "my_tool"   # tool_name
+        assert call_kwargs.args[2] == "success"   # status
+
+    @pytest.mark.asyncio
+    async def test_record_tool_call_invoked_on_error(self) -> None:
+        """record_tool_call is called with status='error' when handler raises."""
+        from unittest.mock import patch
+        from mcp.types import TextContent
+
+        async def failing(name, args):
+            raise RuntimeError("boom")
+
+        stack = MiddlewareStack(enable_logging=False)
+        handler = stack.wrap(failing)
+
+        with patch("api2mcp.runtime.middleware.record_tool_call") as mock_record:
+            result = await handler("broken_tool", {})
+
+        mock_record.assert_called_once()
+        assert mock_record.call_args.args[2] == "error"
+        assert result[0].text  # error TextContent returned
+
+    @pytest.mark.asyncio
+    async def test_otel_span_wraps_handler(self) -> None:
+        """otel_span context manager is entered for each tool call."""
+        from unittest.mock import MagicMock, patch
+        from mcp.types import TextContent
+
+        async def base(name, args):
+            return [TextContent(type="text", text="ok")]
+
+        stack = MiddlewareStack(enable_logging=False)
+        handler = stack.wrap(base)
+
+        mock_ctx = MagicMock()
+        mock_ctx.__enter__ = MagicMock(return_value=mock_ctx)
+        mock_ctx.__exit__ = MagicMock(return_value=False)
+
+        with patch("api2mcp.runtime.middleware.otel_span", return_value=mock_ctx) as mock_span:
+            await handler("my_tool", {})
+
+        mock_span.assert_called_once_with("tool_call:my_tool", tool_name="my_tool")
+        mock_ctx.__enter__.assert_called_once()
+        mock_ctx.__exit__.assert_called_once()
