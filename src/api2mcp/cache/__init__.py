@@ -18,6 +18,7 @@ Public API
 
 from api2mcp.cache.base import CacheBackend, CachedResponse, cache_key
 from api2mcp.cache.config import CacheConfig, RedisConfig
+from api2mcp.cache.disk import DiskCacheBackend
 from api2mcp.cache.headers import (
     CacheDirectives,
     compute_ttl,
@@ -26,7 +27,6 @@ from api2mcp.cache.headers import (
     should_cache,
 )
 from api2mcp.cache.memory import MemoryCacheBackend
-from api2mcp.cache.disk import DiskCacheBackend
 from api2mcp.cache.middleware import CacheMiddleware
 
 __all__ = [

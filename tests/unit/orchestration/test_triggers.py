@@ -1,5 +1,6 @@
 """Tests for orchestration trigger system."""
 from __future__ import annotations
+
 import pytest
 
 
@@ -37,16 +38,16 @@ def test_schedule_trigger_config():
 
 
 def test_webhook_trigger_no_secret_verifies_ok():
-    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
     from api2mcp.orchestration.triggers.config import WebhookTriggerConfig
+    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
     cfg = WebhookTriggerConfig(name="test", path="/hook", secret_env=None)
     trigger = WebhookTrigger(config=cfg)
     assert trigger.verify_signature(b"payload", "any_signature") is True
 
 
 def test_webhook_trigger_bad_secret_rejects(monkeypatch):
-    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
     from api2mcp.orchestration.triggers.config import WebhookTriggerConfig
+    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
     monkeypatch.setenv("TEST_WEBHOOK_SECRET", "real_secret")
     cfg = WebhookTriggerConfig(name="test", path="/hook", secret_env="TEST_WEBHOOK_SECRET")
     trigger = WebhookTrigger(config=cfg)
@@ -55,8 +56,8 @@ def test_webhook_trigger_bad_secret_rejects(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_webhook_trigger_handle_calls_runner():
-    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
     from api2mcp.orchestration.triggers.config import WebhookTriggerConfig
+    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
 
     called_with = []
 
@@ -76,8 +77,8 @@ async def test_webhook_trigger_handle_calls_runner():
 
 
 def test_schedule_trigger_stop():
-    from api2mcp.orchestration.triggers.scheduler import ScheduleTrigger
     from api2mcp.orchestration.triggers.config import ScheduleTriggerConfig
+    from api2mcp.orchestration.triggers.scheduler import ScheduleTrigger
     cfg = ScheduleTriggerConfig(name="test", cron="* * * * *", prompt="test prompt")
     trigger = ScheduleTrigger(config=cfg)
     trigger.stop()  # Should not raise
@@ -97,8 +98,8 @@ def test_all_exports_present():
 
 def test_webhook_trigger_instantiation_with_config():
     """WebhookTrigger can be instantiated with a config (no runner)."""
-    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
     from api2mcp.orchestration.triggers.config import WebhookTriggerConfig
+    from api2mcp.orchestration.triggers.webhook import WebhookTrigger
 
     cfg = WebhookTriggerConfig(
         name="gh-webhook",
@@ -139,9 +140,9 @@ def test_next_sleep_seconds_wrong_field_count_raises_value_error():
 @pytest.mark.asyncio
 async def test_schedule_trigger_fires_runner_when_loop_runs():
     """ScheduleTrigger invokes the workflow runner after the sleep elapses."""
-    import asyncio
-    from api2mcp.orchestration.triggers.scheduler import ScheduleTrigger
+
     from api2mcp.orchestration.triggers.config import ScheduleTriggerConfig
+    from api2mcp.orchestration.triggers.scheduler import ScheduleTrigger
 
     called_with: list[str] = []
 

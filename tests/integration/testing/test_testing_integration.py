@@ -8,12 +8,11 @@ import pytest
 import yaml
 
 from api2mcp.testing import (
-    MCPTestClient,
     CoverageReporter,
+    MCPTestClient,
     MockResponseGenerator,
     SnapshotStore,
 )
-
 
 # ---------------------------------------------------------------------------
 # Shared spec fixtures
@@ -162,7 +161,7 @@ async def test_client_validates_required_arguments(spec_dir: Path) -> None:
 @pytest.mark.asyncio
 async def test_client_missing_spec_raises(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
-        async with MCPTestClient(server_dir=tmp_path) as client:
+        async with MCPTestClient(server_dir=tmp_path) as _client:
             pass
 
 
@@ -230,7 +229,7 @@ async def test_snapshot_first_run_creates_file(spec_dir: Path, tmp_path: Path) -
     store = SnapshotStore(snapshot_dir=snap_dir)
 
     async with MCPTestClient(server_dir=spec_dir) as client:
-        tools_raw = await client.list_tools()
+        _tools_raw = await client.list_tools()
         tools = client.tools
 
     store.assert_match("crud_api", tools)
@@ -260,8 +259,8 @@ async def test_snapshot_detects_change(spec_dir: Path, tmp_path: Path) -> None:
         tools_v1 = client.tools
 
     # Mutate tool description to simulate a change
-    from api2mcp.generators.tool import MCPToolDef
     import dataclasses
+
     tools_v2 = [
         dataclasses.replace(t, description="Changed description")
         for t in tools_v1
@@ -285,6 +284,6 @@ async def test_mock_generator_all_scenarios(spec_dir: Path) -> None:
     gen = MockResponseGenerator(spec, seed=1)
     all_s = gen.all_scenarios()
     assert len(all_s) == 4  # 4 endpoints
-    for tool_name, scenarios in all_s.items():
+    for _tool_name, scenarios in all_s.items():
         assert len(scenarios) >= 2  # at least success + unauthorized
         assert any(s.status_code == 200 for s in scenarios)

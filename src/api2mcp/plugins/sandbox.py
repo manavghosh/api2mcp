@@ -23,7 +23,8 @@ from __future__ import annotations
 import asyncio
 import inspect
 import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 log = logging.getLogger(__name__)
 
@@ -103,7 +104,7 @@ class PluginSandbox:
                     )
                 return callback(**kwargs)
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             log.warning(
                 "Plugin callback %r timed out after %.1fs",
                 getattr(callback, "__name__", repr(callback)),

@@ -46,9 +46,9 @@ def diff_cmd(
       api2mcp diff openapi-v1.yaml openapi-v2.yaml --breaking-only
       api2mcp diff old.yaml new.yaml --output-format json
     """
-    from api2mcp.parsers.openapi import OpenAPIParser
-    from api2mcp.generators.tool import ToolGenerator
     from api2mcp.core.diff import diff_specs
+    from api2mcp.generators.tool import ToolGenerator
+    from api2mcp.parsers.openapi import OpenAPIParser
 
     parser = OpenAPIParser()
     generator = ToolGenerator()

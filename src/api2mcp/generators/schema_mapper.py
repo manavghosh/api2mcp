@@ -16,7 +16,6 @@ from api2mcp.core.ir_schema import (
     Endpoint,
     Parameter,
     ParameterLocation,
-    SchemaRef,
 )
 
 

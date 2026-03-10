@@ -23,7 +23,6 @@ from typing import Any
 from api2mcp.templates.manifest import TemplateManifest
 from api2mcp.templates.registry import TemplateRegistry
 
-
 # ---------------------------------------------------------------------------
 # InstalledTemplate
 # ---------------------------------------------------------------------------

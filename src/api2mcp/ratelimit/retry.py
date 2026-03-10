@@ -20,7 +20,8 @@ where *jitter* is a uniform random value in ``[0, jitter_factor * wait]``.
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, Awaitable, TypeVar
+from collections.abc import Awaitable, Callable
+from typing import Any, TypeVar
 
 import tenacity
 
@@ -58,7 +59,9 @@ def build_retry(
     Returns:
         A ready-to-use :class:`tenacity.AsyncRetrying` context manager.
     """
-    from api2mcp.ratelimit.exceptions import RateLimitError  # local import to avoid cycles
+    from api2mcp.ratelimit.exceptions import (
+        RateLimitError,  # local import to avoid cycles
+    )
 
     return tenacity.AsyncRetrying(
         retry=tenacity.retry_if_exception_type(RateLimitError),

@@ -40,9 +40,10 @@ import json
 import logging
 import re
 import uuid
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, AsyncIterator, Literal
+from typing import Any, Literal
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
@@ -113,7 +114,7 @@ class ExecutionStep:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "ExecutionStep":
+    def from_dict(cls, data: dict[str, Any]) -> ExecutionStep:
         """Deserialise from a plain dict."""
         return cls(
             step_id=data["step_id"],
@@ -711,7 +712,7 @@ class PlannerGraph(BaseAPIGraph):
         updated_plan = list(plan)
         new_results: dict[str, Any] = {}
 
-        for plan_idx, (step, result) in zip(pending_indices, outcomes):
+        for plan_idx, (step, result) in zip(pending_indices, outcomes, strict=False):
             updated_plan[plan_idx] = step.to_dict()
             if result is not None:
                 new_results[step.step_id] = result
@@ -758,7 +759,7 @@ class PlannerGraph(BaseAPIGraph):
 
         updated_plan = list(plan)
         new_results: dict[str, Any] = {}
-        for plan_idx, (step, result) in zip(wave_indices, outcomes):
+        for plan_idx, (step, result) in zip(wave_indices, outcomes, strict=False):
             updated_plan[plan_idx] = step.to_dict()
             if result is not None:
                 new_results[step.step_id] = result

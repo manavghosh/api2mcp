@@ -94,8 +94,8 @@ def test_generate_tools_is_fast(tmp_path: Path) -> None:
     spec_file = tmp_path / "openapi.yaml"
     spec_file.write_text(MINIMAL_SPEC_YAML, encoding="utf-8")
 
-    from api2mcp.parsers.openapi import OpenAPIParser
     from api2mcp.generators.tool import ToolGenerator
+    from api2mcp.parsers.openapi import OpenAPIParser
 
     parser = OpenAPIParser()
     api_spec = asyncio.run(parser.parse(spec_file))
@@ -117,8 +117,8 @@ def test_full_parse_generate_pipeline_is_fast(tmp_path: Path) -> None:
     spec_file = tmp_path / "openapi.yaml"
     spec_file.write_text(MINIMAL_SPEC_YAML, encoding="utf-8")
 
-    from api2mcp.parsers.openapi import OpenAPIParser
     from api2mcp.generators.tool import ToolGenerator
+    from api2mcp.parsers.openapi import OpenAPIParser
 
     start = time.perf_counter()
     parser = OpenAPIParser()

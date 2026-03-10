@@ -2,19 +2,17 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pytest
 
+from api2mcp.generators.tool import MCPToolDef
 from api2mcp.testing.snapshot import (
     SnapshotMismatch,
     SnapshotStore,
     _normalise,
     _tools_to_snapshot,
 )
-from api2mcp.generators.tool import MCPToolDef
-
 
 # ---------------------------------------------------------------------------
 # Helpers

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import pytest
 import httpx
+import pytest
 
 from api2mcp.pool.config import RetryConfig
 from api2mcp.pool.retry import build_connection_retry, connection_retry

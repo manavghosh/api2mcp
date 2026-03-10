@@ -19,7 +19,11 @@ from api2mcp.plugins.hooks import (
     HookRegistration,
 )
 from api2mcp.plugins.manager import PluginManager
-from api2mcp.plugins.sandbox import PluginSandbox, SandboxViolation, make_restricted_builtins
+from api2mcp.plugins.sandbox import (
+    PluginSandbox,
+    SandboxViolation,
+    make_restricted_builtins,
+)
 
 # ---------------------------------------------------------------------------
 # Process-wide singleton hook manager

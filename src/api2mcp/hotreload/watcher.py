@@ -10,10 +10,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import AsyncIterator, Iterable
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import AsyncIterator, Iterable
 
 logger = logging.getLogger(__name__)
 
@@ -126,12 +126,12 @@ class FileWatcher:
             :class:`ChangeEvent` for each relevant file change.
         """
         try:
-            from watchfiles import awatch, Change  # type: ignore[import-not-found]
-        except ImportError:  # pragma: no cover
+            from watchfiles import awatch  # type: ignore[import-not-found]
+        except ImportError as err:  # pragma: no cover
             raise ImportError(
                 "The 'watchfiles' package is required for hot reload. "
                 "Install it with: pip install watchfiles"
-            )
+            ) from err
 
         watch_targets = [str(p) for p in self._paths]
         logger.info("FileWatcher: watching %s (extensions=%s)", watch_targets, self._extensions)

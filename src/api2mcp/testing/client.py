@@ -16,9 +16,8 @@ Usage::
 
 from __future__ import annotations
 
-import json
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -28,7 +27,6 @@ from api2mcp.core.ir_schema import APISpec
 from api2mcp.generators.tool import MCPToolDef, ToolGenerator
 from api2mcp.parsers.openapi import OpenAPIParser
 from api2mcp.testing.mock_generator import MockResponseGenerator, MockScenario
-
 
 # ---------------------------------------------------------------------------
 # Result type

@@ -9,9 +9,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import yaml
 
-from api2mcp.templates.manifest import TemplateManifest
 from api2mcp.templates.registry import RegistryIndex, TemplateRegistry, _build_raw_url
-
 
 # ---------------------------------------------------------------------------
 # Helpers

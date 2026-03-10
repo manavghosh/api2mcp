@@ -13,7 +13,6 @@ from api2mcp.orchestration.adapters.registry import (
     _infer_category,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -347,7 +346,7 @@ class TestLazyConnection:
         """connect_all should call connect_server for each unconnected config."""
         registry = MCPToolRegistry()
         connected: list[str] = []
-        original_connect = registry.connect_server
+        _original_connect = registry.connect_server
 
         async def tracking_connect(name: str) -> Any:
             connected.append(name)

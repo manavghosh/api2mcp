@@ -14,8 +14,9 @@ import json
 import logging
 import time
 from collections import defaultdict
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Awaitable, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from mcp.types import TextContent
 

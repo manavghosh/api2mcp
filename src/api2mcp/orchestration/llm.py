@@ -141,7 +141,7 @@ class LLMFactory:
         model: str | None = None,
         temperature: float | None = None,
         api_key: str | None = None,
-    ) -> "BaseChatModel":
+    ) -> BaseChatModel:
         """Instantiate a chat model for the requested provider.
 
         Parameters
@@ -255,9 +255,11 @@ class LLMFactory:
         return key
 
     @staticmethod
-    def _make_anthropic(model: str, temperature: float, api_key: str) -> "BaseChatModel":
+    def _make_anthropic(model: str, temperature: float, api_key: str) -> BaseChatModel:
         try:
-            from langchain_anthropic import ChatAnthropic  # type: ignore[import-not-found]
+            from langchain_anthropic import (
+                ChatAnthropic,  # type: ignore[import-not-found]
+            )
         except ImportError as exc:
             raise LLMConfigError(
                 "langchain-anthropic is not installed.",
@@ -268,7 +270,7 @@ class LLMFactory:
         )
 
     @staticmethod
-    def _make_openai(model: str, temperature: float, api_key: str) -> "BaseChatModel":
+    def _make_openai(model: str, temperature: float, api_key: str) -> BaseChatModel:
         try:
             from langchain_openai import ChatOpenAI  # type: ignore[import-not-found]
         except ImportError as exc:
@@ -281,9 +283,11 @@ class LLMFactory:
         )
 
     @staticmethod
-    def _make_google(model: str, temperature: float, api_key: str) -> "BaseChatModel":
+    def _make_google(model: str, temperature: float, api_key: str) -> BaseChatModel:
         try:
-            from langchain_google_genai import ChatGoogleGenerativeAI  # type: ignore[import-not-found]
+            from langchain_google_genai import (
+                ChatGoogleGenerativeAI,  # type: ignore[import-not-found]
+            )
         except ImportError as exc:
             raise LLMConfigError(
                 "langchain-google-genai is not installed.",

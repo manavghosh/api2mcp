@@ -313,7 +313,7 @@ class SpecDiscoverer:
     # Context manager support
     # ------------------------------------------------------------------
 
-    async def __aenter__(self) -> "SpecDiscoverer":
+    async def __aenter__(self) -> SpecDiscoverer:
         self._client = httpx.AsyncClient(
             timeout=self._timeout,
             max_redirects=self._max_redirects,

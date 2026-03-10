@@ -2,17 +2,15 @@
 
 from __future__ import annotations
 
-import shutil
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 import yaml
 
 from api2mcp.templates.installer import InstalledTemplate, TemplateInstaller
-from api2mcp.templates.manifest import TemplateManifest, VersionEntry
+from api2mcp.templates.manifest import TemplateManifest
 from api2mcp.templates.registry import TemplateRegistry
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -80,7 +78,7 @@ def test_installed_template_repr(tmp_path: Path) -> None:
 async def test_install_creates_dest_dir(tmp_path: Path) -> None:
     installer = _make_installer()
     dest = tmp_path / "my-server"
-    installed = await installer.install("my-template", dest=dest)
+    _installed = await installer.install("my-template", dest=dest)
     assert dest.is_dir()
 
 

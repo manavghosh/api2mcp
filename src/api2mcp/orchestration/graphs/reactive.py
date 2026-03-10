@@ -33,12 +33,11 @@ Usage::
 
 from __future__ import annotations
 
-import asyncio
 import logging
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import HumanMessage
 from langchain_core.tools import StructuredTool
 
 from api2mcp.orchestration.adapters.registry import MCPToolRegistry
@@ -197,7 +196,7 @@ class ReactiveGraph(BaseAPIGraph):
         """
         try:
             return await super().run(user_input, thread_id=thread_id, **kwargs)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(
                 "ReactiveGraph.run: MCP timeout for api_name='%s', thread_id='%s'",
                 self.api_name,
@@ -243,7 +242,7 @@ class ReactiveGraph(BaseAPIGraph):
         try:
             async for event in super().stream(user_input, thread_id=thread_id, **kwargs):
                 yield event
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(
                 "ReactiveGraph.stream: MCP timeout for api_name='%s', thread_id='%s'",
                 self.api_name,

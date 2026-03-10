@@ -20,7 +20,12 @@ Public API
 * :func:`connection_retry` — decorator factory for connection retry
 """
 
-from api2mcp.pool.config import HealthCheckConfig, HostPoolConfig, PoolConfig, RetryConfig
+from api2mcp.pool.config import (
+    HealthCheckConfig,
+    HostPoolConfig,
+    PoolConfig,
+    RetryConfig,
+)
 from api2mcp.pool.health import HostHealth, PoolHealthChecker, PoolHealthStatus
 from api2mcp.pool.manager import ConnectionPoolManager
 from api2mcp.pool.retry import build_connection_retry, connection_retry

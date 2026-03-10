@@ -11,7 +11,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -59,7 +58,7 @@ def test_registry_namespacing() -> None:
 @pytest.mark.e2e
 def test_diff_result_used_in_pipeline() -> None:
     """DiffResult integrates correctly with tool lists from generator."""
-    from api2mcp.core.diff import diff_specs, DiffResult
+    from api2mcp.core.diff import DiffResult, diff_specs
 
     tool_a = MagicMock()
     tool_a.name = "get_user"
@@ -124,6 +123,7 @@ async def test_result_aggregator_node_sets_status() -> None:
 def test_should_continue_routes_to_end_when_no_tool_calls() -> None:
     """should_continue returns END when last message has no tool_calls."""
     from langgraph.graph import END
+
     from api2mcp.orchestration.routing.should_continue import should_continue
 
     msg = MagicMock()

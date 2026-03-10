@@ -7,9 +7,8 @@ from pathlib import Path
 import pytest
 
 from api2mcp.secrets.masking import SecretRegistry
-from api2mcp.secrets.providers.env import EnvironmentProvider
 from api2mcp.secrets.providers.encrypted_file import EncryptedFileProvider
-
+from api2mcp.secrets.providers.env import EnvironmentProvider
 
 # ---------------------------------------------------------------------------
 # EnvironmentProvider

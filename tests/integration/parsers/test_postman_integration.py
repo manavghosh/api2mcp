@@ -14,7 +14,6 @@ import pytest
 from api2mcp.core.ir_schema import AuthType, HttpMethod, ParameterLocation
 from api2mcp.parsers.postman import PostmanParser
 
-
 # ---------------------------------------------------------------------------
 # Realistic Postman Collection v2.1 fixture — "Todo API"
 # ---------------------------------------------------------------------------

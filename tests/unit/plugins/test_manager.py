@@ -1,14 +1,9 @@
 """Unit tests for PluginManager lifecycle (G25)."""
 from __future__ import annotations
 
-from unittest.mock import MagicMock, call
-
-import pytest
-
 from api2mcp.plugins.base import BasePlugin
 from api2mcp.plugins.hooks import HookManager
 from api2mcp.plugins.manager import PluginManager
-
 
 # ---------------------------------------------------------------------------
 # Minimal concrete plugin helpers
@@ -166,7 +161,7 @@ class TestLoadNonExistentModule:
 
     def test_plugin_loader_nonexistent_dir_raises_or_returns_empty(self, tmp_path) -> None:
         """PluginLoader with a non-existent path is handled gracefully."""
-        from pathlib import Path
+
         from api2mcp.plugins.discovery import PluginLoader
 
         nonexistent = tmp_path / "does_not_exist"

@@ -151,7 +151,39 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM", "TCH", "PTH"]
-ignore = ["E501"]
+ignore = [
+    "E501",   # line too long — handled by formatter
+    # TYPE_CHECKING refactors deferred to v0.2
+    "TC001", "TC002", "TC003",
+    # StrEnum migration deferred (str+Enum pattern is valid in 3.11)
+    "UP042",
+    # Exception naming conventions — renaming is a breaking change
+    "N818",
+    # Variable / import naming — cosmetic, non-blocking
+    "N806", "N817",
+    # Module-level import not at top — some are intentional (optional deps)
+    "E402",
+    # Simplification suggestions — style preferences, non-blocking
+    "SIM117", "SIM105", "SIM102", "SIM108", "SIM103", "SIM222",
+    # zip() strict parameter — default False is intentional in existing code
+    "B905",
+    # Empty abstract-ish methods — design pattern used in base classes
+    "B027",
+    # Ambiguous variable names in tests — `l` used as loop var in list comps
+    "E741",
+]
+
+[tool.bandit]
+# Exclude test directories and generated code from security scan
+exclude_dirs = ["tests", "examples", "demo", "demo-langgraph", "demo-live-api"]
+skips = [
+    "B101",  # assert_used — asserts are fine in non-optimised code
+    "B301",  # pickle/shelve — used in local disk cache only, not for untrusted input
+    "B104",  # hardcoded_bind_all_interfaces — 0.0.0.0 is intentional default for server
+    "B603",  # subprocess_without_shell_equals_true — false positive on safe calls
+    "B607",  # start_process_with_partial_path — managed CLIs only
+    "B701",  # jinja2 autoescape — templates generate Python code, not HTML
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["api2mcp"]

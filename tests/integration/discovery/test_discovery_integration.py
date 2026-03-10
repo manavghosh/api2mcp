@@ -5,7 +5,6 @@ Uses respx to simulate a variety of realistic server setups.
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
 import httpx
@@ -17,7 +16,6 @@ from api2mcp.discovery.discoverer import (
     SpecDiscoverer,
     SpecFormat,
 )
-
 
 # ---------------------------------------------------------------------------
 # Shared spec fixtures

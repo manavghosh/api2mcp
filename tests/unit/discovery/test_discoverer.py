@@ -8,9 +8,9 @@ from __future__ import annotations
 import json
 from typing import Any
 
+import httpx
 import pytest
 import respx
-import httpx
 
 from api2mcp.discovery.discoverer import (
     DiscoveredSpec,
@@ -24,7 +24,6 @@ from api2mcp.discovery.discoverer import (
     detect_format_from_url,
     extract_spec_links_from_html,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures — sample spec payloads
@@ -213,11 +212,11 @@ class TestDetectFormatFromDict:
 class TestExtractSpecLinksFromHtml:
     def test_finds_openapi_link(self) -> None:
         links = extract_spec_links_from_html(HTML_WITH_SPEC_LINK, "https://api.example.com")
-        assert any("openapi" in l for l in links)
+        assert any("openapi" in link for link in links)
 
     def test_resolves_relative_urls(self) -> None:
         links = extract_spec_links_from_html(HTML_WITH_SPEC_LINK, "https://api.example.com")
-        assert all(l.startswith("https://") for l in links)
+        assert all(link.startswith("https://") for link in links)
 
     def test_absolute_url_preserved(self) -> None:
         html = '<a href="https://other.com/openapi.json">spec</a>'

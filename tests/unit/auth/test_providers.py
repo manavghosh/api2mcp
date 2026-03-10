@@ -14,7 +14,6 @@ from api2mcp.auth.providers.custom import CustomAuthProvider
 from api2mcp.auth.token_store import TokenEntry, TokenStore
 from api2mcp.core.ir_schema import AuthScheme, AuthType
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

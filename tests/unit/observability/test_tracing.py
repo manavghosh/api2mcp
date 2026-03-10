@@ -15,7 +15,7 @@ def test_get_tracer_returns_object():
 
 def test_span_context_manager_no_raise():
     from api2mcp.observability.tracing import span
-    with span("test_operation", tool="test_tool") as s:
+    with span("test_operation", tool="test_tool") as _s:
         pass  # Should not raise regardless of otel installation
 
 

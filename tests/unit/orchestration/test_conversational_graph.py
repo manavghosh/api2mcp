@@ -7,7 +7,6 @@ compiled graph is a controllable mock.
 
 from __future__ import annotations
 
-import asyncio
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -17,7 +16,6 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 from api2mcp.orchestration.adapters.registry import MCPToolRegistry
 from api2mcp.orchestration.graphs.conversational import ConversationalGraph
 from api2mcp.orchestration.state.definitions import ConversationalState
-
 
 # ---------------------------------------------------------------------------
 # Helpers

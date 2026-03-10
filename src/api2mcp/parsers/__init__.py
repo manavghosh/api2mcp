@@ -4,7 +4,12 @@
 from .graphql import GraphQLParser
 from .openapi import OpenAPIParser
 from .postman import PostmanParser
-from .swagger import MigrationSeverity, MigrationSuggestion, SwaggerConverter, SwaggerParser
+from .swagger import (
+    MigrationSeverity,
+    MigrationSuggestion,
+    SwaggerConverter,
+    SwaggerParser,
+)
 
 __all__ = [
     "GraphQLParser",

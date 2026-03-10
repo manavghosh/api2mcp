@@ -5,13 +5,11 @@ from __future__ import annotations
 import pytest
 
 from api2mcp.cache.headers import (
-    CacheDirectives,
     compute_ttl,
     parse_cache_control,
     parse_headers,
     should_cache,
 )
-
 
 # ---------------------------------------------------------------------------
 # parse_cache_control

@@ -6,8 +6,7 @@ import json
 from pathlib import Path
 
 import pytest
-import jsonschema
-from jsonschema import Draft7Validator, validate, ValidationError
+from jsonschema import Draft7Validator, ValidationError, validate
 
 # ---------------------------------------------------------------------------
 # Schema fixtures

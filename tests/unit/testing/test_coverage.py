@@ -6,11 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from api2mcp.testing.coverage import CoverageReporter
 from api2mcp.generators.tool import MCPToolDef
 from api2mcp.testing.client import ToolResult
+from api2mcp.testing.coverage import CoverageReporter
 from api2mcp.testing.mock_generator import MockScenario
-
 
 # ---------------------------------------------------------------------------
 # Helpers

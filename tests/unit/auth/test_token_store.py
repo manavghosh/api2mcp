@@ -8,7 +8,6 @@ import pytest
 
 from api2mcp.auth.token_store import TokenEntry, TokenStore
 
-
 # ---------------------------------------------------------------------------
 # TokenEntry
 # ---------------------------------------------------------------------------
@@ -137,5 +136,5 @@ async def test_store_concurrent_access() -> None:
 
     await asyncio.gather(*[write(k) for k in keys])
     results = await asyncio.gather(*[read(k) for k in keys])
-    for k, val in zip(keys, results):
+    for k, val in zip(keys, results, strict=False):
         assert val == f"tok_{k}"

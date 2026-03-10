@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: MIT
 """Pydantic config models for orchestration triggers."""
 from __future__ import annotations
+
 from typing import Literal
+
 from pydantic import BaseModel
 
 

@@ -21,7 +21,8 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field, create_model
@@ -259,7 +260,7 @@ class MCPToolAdapter:
                         ),
                         timeout=self.timeout_seconds,
                     )
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     elapsed_ms = (time.monotonic() - t_start) * 1000
                     logger.warning(
                         "Tool '%s' timed out after %.0fms (limit=%.1fs)",

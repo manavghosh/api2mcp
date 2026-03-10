@@ -8,7 +8,6 @@ Tests cover:
 
 from __future__ import annotations
 
-import pytest
 from langchain_core.messages import AIMessage, HumanMessage
 
 from api2mcp.orchestration.state import (
@@ -19,7 +18,6 @@ from api2mcp.orchestration.state import (
     append_errors,
     merge_dicts,
 )
-
 
 # ---------------------------------------------------------------------------
 # Reducer tests

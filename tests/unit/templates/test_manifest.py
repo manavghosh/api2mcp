@@ -7,7 +7,6 @@ import yaml
 
 from api2mcp.templates.manifest import ReviewEntry, TemplateManifest, VersionEntry
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

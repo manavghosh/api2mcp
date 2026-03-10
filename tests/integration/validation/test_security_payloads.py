@@ -9,8 +9,8 @@ from __future__ import annotations
 import pytest
 
 from api2mcp.validation.exceptions import InjectionDetectedError, SizeExceededError
-from api2mcp.validation.pipeline import ValidationConfig, validate_tool_input
 from api2mcp.validation.limits import SizeLimits
+from api2mcp.validation.pipeline import ValidationConfig, validate_tool_input
 
 _SCHEMA = {
     "type": "object",
@@ -135,8 +135,9 @@ def test_benign_inputs_not_rejected(payload: str) -> None:
 @pytest.mark.asyncio
 @pytest.mark.integration
 async def test_pipeline_end_to_end_valid() -> None:
-    from api2mcp.validation.pipeline import ValidationMiddleware
     from mcp.types import TextContent
+
+    from api2mcp.validation.pipeline import ValidationMiddleware
 
     async def handler(name: str, args: dict | None) -> list[TextContent]:
         return [TextContent(type="text", text=f"result:{args}")]
@@ -152,9 +153,11 @@ async def test_pipeline_end_to_end_valid() -> None:
 @pytest.mark.asyncio
 @pytest.mark.integration
 async def test_pipeline_end_to_end_attack_blocked() -> None:
-    from api2mcp.validation.pipeline import ValidationMiddleware
-    from mcp.types import TextContent
     import json
+
+    from mcp.types import TextContent
+
+    from api2mcp.validation.pipeline import ValidationMiddleware
 
     async def handler(name: str, args: dict | None) -> list[TextContent]:
         return [TextContent(type="text", text="should not reach")]

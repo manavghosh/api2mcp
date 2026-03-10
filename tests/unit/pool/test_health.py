@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import httpx
 import pytest
 import respx
-import httpx
 
 from api2mcp.pool.config import HealthCheckConfig
 from api2mcp.pool.health import HostHealth, PoolHealthChecker

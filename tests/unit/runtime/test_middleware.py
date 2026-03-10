@@ -3,7 +3,6 @@
 import json
 
 import pytest
-
 from mcp.types import TextContent
 
 from api2mcp.runtime.middleware import CallMetrics, MiddlewareStack, _summarize_args
@@ -165,6 +164,7 @@ class TestMiddlewareObservability:
     async def test_record_tool_call_invoked_on_success(self) -> None:
         """record_tool_call is called with status='success' on normal execution."""
         from unittest.mock import patch
+
         from mcp.types import TextContent
 
         async def base(name, args):
@@ -185,7 +185,7 @@ class TestMiddlewareObservability:
     async def test_record_tool_call_invoked_on_error(self) -> None:
         """record_tool_call is called with status='error' when handler raises."""
         from unittest.mock import patch
-        from mcp.types import TextContent
+
 
         async def failing(name, args):
             raise RuntimeError("boom")
@@ -204,6 +204,7 @@ class TestMiddlewareObservability:
     async def test_otel_span_wraps_handler(self) -> None:
         """otel_span context manager is entered for each tool call."""
         from unittest.mock import MagicMock, patch
+
         from mcp.types import TextContent
 
         async def base(name, args):

@@ -1,13 +1,12 @@
 """Tests for api2mcp orchestrate CLI command."""
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from click.testing import CliRunner
 
 from api2mcp.cli.commands.orchestrate import _run_workflow, orchestrate_cmd
-
 
 # ---------------------------------------------------------------------------
 # Existing smoke tests (preserved)

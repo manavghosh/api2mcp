@@ -7,7 +7,6 @@ import pytest
 from api2mcp.plugins.base import BasePlugin
 from api2mcp.plugins.dependency import PluginDependencyError, resolve_load_order
 
-
 # ---------------------------------------------------------------------------
 # Test plugin fixtures
 # ---------------------------------------------------------------------------

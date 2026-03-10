@@ -14,9 +14,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from api2mcp.orchestration.adapters.base import MCPToolAdapter, _json_schema_to_pydantic
+from api2mcp.orchestration.adapters.base import MCPToolAdapter
 from api2mcp.orchestration.adapters.registry import MCPToolRegistry
-
 
 # ---------------------------------------------------------------------------
 # Shared fixtures

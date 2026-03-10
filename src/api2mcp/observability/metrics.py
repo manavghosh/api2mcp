@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 try:
-    from opentelemetry import metrics as _otel_metrics  # type: ignore[import-not-found]
+    import opentelemetry.metrics  # type: ignore[import-not-found]  # noqa: F401
     _HAS_OTEL = True
 except ImportError:
     _HAS_OTEL = False

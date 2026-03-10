@@ -1,6 +1,8 @@
 """Integration test: plugin hooks fired during parse pipeline."""
 from __future__ import annotations
+
 from pathlib import Path
+
 from click.testing import CliRunner
 
 FIXTURES_DIR = Path(__file__).parents[2] / "unit"
@@ -27,6 +29,7 @@ paths:
 def test_openapi_parser_parse_succeeds(tmp_path):
     """OpenAPI parser can parse a minimal spec without errors."""
     import asyncio
+
     from api2mcp.parsers.openapi import OpenAPIParser
     spec = _get_minimal_spec(tmp_path)
     parser = OpenAPIParser()

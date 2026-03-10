@@ -6,7 +6,6 @@ from __future__ import annotations
 import asyncio
 import logging
 from pathlib import Path
-from typing import Optional
 
 import click
 
@@ -55,12 +54,12 @@ logger = logging.getLogger(__name__)
 )
 def dev_cmd(
     spec: Path,
-    output_dir: Optional[Path],
+    output_dir: Path | None,
     host: str,
     port: int,
     transport: str,
     watch_dirs: tuple,
-    config_file: Optional[Path],
+    config_file: Path | None,
 ) -> None:
     """Start a hot-reload development server.
 

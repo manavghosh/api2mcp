@@ -4,8 +4,6 @@ from __future__ import annotations
 import zipfile as zf
 from pathlib import Path
 
-import pytest
-
 
 def test_export_as_wheel_creates_whl_file(tmp_path: Path) -> None:
     server_dir = tmp_path / "server"

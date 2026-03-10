@@ -38,7 +38,6 @@ class TestTaskTracker:
 
     async def test_drain_waits_for_completion(self) -> None:
         tracker = TaskTracker(drain_timeout=5.0)
-        event = asyncio.Event()
         completed = [False]
 
         async def slow() -> None:

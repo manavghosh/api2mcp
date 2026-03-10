@@ -1,8 +1,11 @@
 """Tests for api2mcp validate --output-format flag."""
 from __future__ import annotations
+
 import json
 from pathlib import Path
+
 from click.testing import CliRunner
+
 from api2mcp.cli.commands.validate import validate_cmd
 
 

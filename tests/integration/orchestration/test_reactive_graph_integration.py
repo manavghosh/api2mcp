@@ -20,7 +20,6 @@ from langchain_core.messages import AIMessage, HumanMessage
 from api2mcp.orchestration.adapters.registry import MCPToolRegistry
 from api2mcp.orchestration.graphs.reactive import ReactiveGraph
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -168,7 +167,7 @@ class TestReactiveGraphRunIntegration:
         """asyncio.TimeoutError from the graph must propagate out of run()."""
         registry = _make_registry("github:list_issues")
         compiled = MagicMock()
-        compiled.ainvoke = AsyncMock(side_effect=asyncio.TimeoutError())
+        compiled.ainvoke = AsyncMock(side_effect=TimeoutError())
 
         with patch(
             "api2mcp.orchestration.graphs.reactive.create_react_agent",
@@ -269,7 +268,7 @@ class TestReactiveGraphStreamIntegration:
         registry = _make_registry("github:list_issues")
 
         async def _timeout_stream(*_: Any, **__: Any):
-            raise asyncio.TimeoutError()
+            raise TimeoutError()
             yield
 
         compiled = MagicMock()

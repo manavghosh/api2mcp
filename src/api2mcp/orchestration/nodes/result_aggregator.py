@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 """Result aggregator node — combines intermediate results into final_result."""
 from __future__ import annotations
+
 import logging
 from typing import Any
 

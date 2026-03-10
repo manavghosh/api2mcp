@@ -8,7 +8,7 @@ when the auth logic lives outside the framework.
 
 from __future__ import annotations
 
-from typing import Awaitable, Callable
+from collections.abc import Awaitable, Callable
 
 from api2mcp.auth.base import AuthProvider, RequestContext
 

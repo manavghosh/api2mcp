@@ -6,10 +6,9 @@ Centralises all terminal output so commands stay clean.
 
 from __future__ import annotations
 
-from contextlib import contextmanager
-from typing import Generator
-
 import sys
+from collections.abc import Generator
+from contextlib import contextmanager
 
 from rich.console import Console
 from rich.panel import Panel
@@ -43,7 +42,7 @@ def _utf8_stream(stream: object) -> object:
     encoding = getattr(stream, "encoding", "utf-8") or "utf-8"
     if encoding.lower().replace("-", "") not in ("utf8", "utf16", "utf32"):
         try:
-            return open(  # noqa: WPS515  (intentional reconfigure)
+            return open(  # intentional reconfigure — not a context manager
                 stream.fileno(),  # type: ignore[union-attr]
                 mode="w",
                 encoding="utf-8",

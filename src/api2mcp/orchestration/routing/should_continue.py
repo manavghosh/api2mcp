@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 """Routing: decide if the reactive agent should call another tool or finish."""
 from __future__ import annotations
+
 from typing import Any
 
 

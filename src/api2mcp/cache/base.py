@@ -51,7 +51,7 @@ class CachedResponse:
         }
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "CachedResponse":
+    def from_dict(cls, d: dict[str, Any]) -> CachedResponse:
         return cls(
             data=d["data"],
             etag=d.get("etag"),

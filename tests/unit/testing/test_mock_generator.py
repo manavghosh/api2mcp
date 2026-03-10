@@ -6,7 +6,6 @@ import pytest
 
 from api2mcp.testing.mock_generator import MockResponseGenerator, MockScenario
 
-
 # ---------------------------------------------------------------------------
 # Helpers — minimal APISpec fixtures
 # ---------------------------------------------------------------------------
@@ -14,7 +13,12 @@ from api2mcp.testing.mock_generator import MockResponseGenerator, MockScenario
 def _make_spec(endpoints_raw: list[dict]) -> object:
     """Build a minimal APISpec with given endpoint dicts."""
     from api2mcp.core.ir_schema import (
-        APISpec, Endpoint, HttpMethod, Parameter, ParameterLocation, SchemaRef,
+        APISpec,
+        Endpoint,
+        HttpMethod,
+        Parameter,
+        ParameterLocation,
+        SchemaRef,
     )
 
     endpoints = []

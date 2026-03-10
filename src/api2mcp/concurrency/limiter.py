@@ -104,14 +104,14 @@ class ConcurrencyLimiter:
                 self._global_sem.acquire(),
                 timeout=timeout,
             )
-        except TimeoutError:
+        except TimeoutError as err:
             self._stats.total_rejected += 1
             raise ConcurrencyError(
                 f"Global concurrency limit ({self._config.max_concurrent}) reached "
                 f"for tool '{tool_name}'",
                 tool_name=tool_name,
                 limit=self._config.max_concurrent,
-            )
+            ) from err
 
         # Acquire per-tool semaphore if configured
         tool_sem = self._get_or_create_tool_sem(tool_name)
@@ -121,14 +121,14 @@ class ConcurrencyLimiter:
                     tool_sem.acquire(),
                     timeout=timeout,
                 )
-            except TimeoutError:
+            except TimeoutError as err:
                 self._global_sem.release()  # Release global on per-tool timeout
                 self._stats.total_rejected += 1
                 raise ConcurrencyError(
                     f"Per-tool concurrency limit ({limit}) reached for tool '{tool_name}'",
                     tool_name=tool_name,
                     limit=limit,
-                )
+                ) from err
 
         self._stats.total_acquired += 1
         self._stats.current_active += 1

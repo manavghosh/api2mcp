@@ -29,7 +29,6 @@ from typing import Any
 
 from api2mcp.generators.tool import MCPToolDef
 
-
 # ---------------------------------------------------------------------------
 # Serialisation helpers
 # ---------------------------------------------------------------------------
@@ -90,7 +89,7 @@ def _diff_hint(expected: str, actual: str) -> str:
     """Return a short summary of the first differing line."""
     exp_lines = expected.splitlines()
     act_lines = actual.splitlines()
-    for i, (e, a) in enumerate(zip(exp_lines, act_lines)):
+    for i, (e, a) in enumerate(zip(exp_lines, act_lines, strict=False)):
         if e != a:
             return (
                 f"First difference at line {i + 1}:\n"

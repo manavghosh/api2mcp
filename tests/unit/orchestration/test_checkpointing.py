@@ -10,6 +10,7 @@ Tests cover:
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 
 import pytest
 
@@ -19,7 +20,6 @@ from api2mcp.orchestration.checkpointing import (
     make_thread_id,
 )
 
-
 # ---------------------------------------------------------------------------
 # CheckpointerFactory — memory backend
 # ---------------------------------------------------------------------------
@@ -28,14 +28,18 @@ from api2mcp.orchestration.checkpointing import (
 class TestCheckpointerFactoryMemory:
     def test_create_memory_returns_memory_saver(self) -> None:
         """create({"backend": "memory"}) must return a MemorySaver instance."""
-        from langgraph.checkpoint.memory import MemorySaver  # type: ignore[import-untyped]
+        from langgraph.checkpoint.memory import (
+            MemorySaver,  # type: ignore[import-untyped]
+        )
 
         cp = CheckpointerFactory.create({"backend": "memory"})
         assert isinstance(cp, MemorySaver)
 
     def test_create_memory_is_default_backend(self) -> None:
         """Omitting 'backend' key defaults to the memory checkpointer."""
-        from langgraph.checkpoint.memory import MemorySaver  # type: ignore[import-untyped]
+        from langgraph.checkpoint.memory import (
+            MemorySaver,  # type: ignore[import-untyped]
+        )
 
         cp = CheckpointerFactory.create({})
         assert isinstance(cp, MemorySaver)
@@ -88,15 +92,14 @@ class TestCheckpointerFactorySQLite:
         cp = CheckpointerFactory.create({"backend": "sqlite"})
         assert isinstance(cp, contextlib.AbstractAsyncContextManager)
 
-    def test_create_sqlite_explicit_file_path(self, tmp_path: object) -> None:
+    def test_create_sqlite_explicit_file_path(self, tmp_path: Path) -> None:
         """An explicit file-system path must also return an async context manager."""
         if not _sqlite_package_available():
             pytest.skip("langgraph-checkpoint-sqlite not installed")
 
         import contextlib
-        import os
 
-        db_path = os.path.join(str(tmp_path), "test_workflows.db")  # type: ignore[arg-type]
+        db_path = str(tmp_path / "test_workflows.db")
         cp = CheckpointerFactory.create({"backend": "sqlite", "path": db_path})
         assert isinstance(cp, contextlib.AbstractAsyncContextManager)
 
@@ -131,7 +134,6 @@ class TestCheckpointerFactoryPostgres:
         """If langgraph-checkpoint-postgres is not installed, the factory must
         raise ImportError with a helpful installation hint."""
         import builtins
-        import importlib
 
         real_import = builtins.__import__
 
@@ -193,7 +195,9 @@ class TestCheckpointerFactoryUnknown:
 class TestCreateFromYamlSection:
     def test_memory_backend_via_yaml_section(self) -> None:
         """create_from_yaml_section() should extract the 'checkpointing' key."""
-        from langgraph.checkpoint.memory import MemorySaver  # type: ignore[import-untyped]
+        from langgraph.checkpoint.memory import (
+            MemorySaver,  # type: ignore[import-untyped]
+        )
 
         orchestration_cfg = {"checkpointing": {"backend": "memory"}}
         cp = CheckpointerFactory.create_from_yaml_section(orchestration_cfg)
@@ -201,7 +205,9 @@ class TestCreateFromYamlSection:
 
     def test_missing_checkpointing_key_defaults_to_memory(self) -> None:
         """When the 'checkpointing' sub-section is absent, default to memory."""
-        from langgraph.checkpoint.memory import MemorySaver  # type: ignore[import-untyped]
+        from langgraph.checkpoint.memory import (
+            MemorySaver,  # type: ignore[import-untyped]
+        )
 
         cp = CheckpointerFactory.create_from_yaml_section({})
         assert isinstance(cp, MemorySaver)
@@ -223,7 +229,9 @@ class TestCreateFromYamlSection:
 
     def test_extra_top_level_keys_ignored(self) -> None:
         """Unrelated keys in the orchestration config must not cause errors."""
-        from langgraph.checkpoint.memory import MemorySaver  # type: ignore[import-untyped]
+        from langgraph.checkpoint.memory import (
+            MemorySaver,  # type: ignore[import-untyped]
+        )
 
         orchestration_cfg = {
             "checkpointing": {"backend": "memory"},

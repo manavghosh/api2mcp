@@ -68,7 +68,8 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 try:
-    from graphql import GraphQLSchema, build_schema as _gql_build_schema
+    from graphql import GraphQLSchema
+    from graphql import build_schema as _gql_build_schema
     from graphql.type import (
         GraphQLEnumType,
         GraphQLInputObjectType,

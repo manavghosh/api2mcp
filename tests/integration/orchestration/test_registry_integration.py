@@ -15,9 +15,7 @@ import pytest
 from api2mcp.orchestration.adapters.registry import (
     MCPToolRegistry,
     ServerConfig,
-    _infer_category,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -231,7 +229,7 @@ class TestUsageStatsIntegration:
             "github:create_pr",
             "jira:list_tickets",
         }
-        for name, m in stats.items():
+        for _name, m in stats.items():
             assert m["call_count"] == 0
             assert "avg_latency_ms" in m
 
@@ -254,7 +252,7 @@ class TestRegistryLifecycle:
         closed = False
 
         class FakeExitStack:
-            async def __aenter__(self) -> "FakeExitStack":
+            async def __aenter__(self) -> FakeExitStack:
                 return self
 
             async def __aexit__(self, *args: Any) -> None:

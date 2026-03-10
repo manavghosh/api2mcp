@@ -13,6 +13,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+
+
 @dataclass
 class RequestContext:
     """Mutable container for outgoing HTTP request credentials.

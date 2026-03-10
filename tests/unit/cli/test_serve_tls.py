@@ -1,7 +1,11 @@
 """Tests for serve command TLS warning."""
 from __future__ import annotations
+
 import io
-from api2mcp.cli.commands.serve import _check_tls_warning  # type: ignore[reportAttributeAccessIssue]
+
+from api2mcp.cli.commands.serve import (
+    _check_tls_warning,  # type: ignore[reportAttributeAccessIssue]
+)
 
 
 def test_tls_warning_shown_for_0000_http():

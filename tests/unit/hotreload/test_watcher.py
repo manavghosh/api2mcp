@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import asyncio
+from collections.abc import AsyncIterator
 from pathlib import Path
-from typing import AsyncIterator
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -15,7 +14,6 @@ from api2mcp.hotreload.watcher import (
     ChangeType,
     FileWatcher,
 )
-
 
 # ---------------------------------------------------------------------------
 # ChangeType / ChangeEvent

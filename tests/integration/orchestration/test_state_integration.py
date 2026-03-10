@@ -18,7 +18,6 @@ from api2mcp.orchestration.state import (
     merge_dicts,
 )
 
-
 # ---------------------------------------------------------------------------
 # Serialization (checkpointing compatibility)
 # ---------------------------------------------------------------------------

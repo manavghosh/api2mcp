@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 from api2mcp.plugins.base import BasePlugin, PluginMetadata
-from api2mcp.plugins.hooks import HookManager, POST_PARSE
-
+from api2mcp.plugins.hooks import POST_PARSE, HookManager
 
 # ---------------------------------------------------------------------------
 # PluginMetadata

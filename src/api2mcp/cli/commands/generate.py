@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 
 import click
 
@@ -136,12 +137,11 @@ def _write_server_module(
     output_dir: Path,
     *,
     api_spec: object,
-    tools: list[object],
+    tools: list[Any],
     server_name: str | None,
 ) -> None:
     """Write a ready-to-run server.py into *output_dir*."""
     from api2mcp.core.ir_schema import APISpec
-    from api2mcp.generators.tool import MCPToolDef
 
     assert isinstance(api_spec, APISpec)
 
@@ -149,22 +149,6 @@ def _write_server_module(
     version = api_spec.version
     base_url = api_spec.base_url or (
         api_spec.servers[0].url if api_spec.servers else "http://localhost:8080"
-    )
-
-    # Serialise tool definitions to JSON for the generated module
-    import json
-
-    tool_defs_json = json.dumps(
-        [
-            {
-                "name": t.name,  # type: ignore[union-attr]
-                "description": t.description,  # type: ignore[union-attr]
-                "input_schema": t.input_schema,  # type: ignore[union-attr]
-            }
-            for t in tools
-            if isinstance(t, MCPToolDef)
-        ],
-        indent=2,
     )
 
     server_code = f'''\
@@ -215,6 +199,7 @@ if __name__ == "__main__":
 
     # Copy spec file
     import dataclasses
+
     import yaml
 
     # Re-serialise the parsed spec as YAML for portability

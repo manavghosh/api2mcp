@@ -7,9 +7,17 @@ import json
 import pytest
 from mcp.types import TextContent
 
-from api2mcp.validation.exceptions import InjectionDetectedError, SchemaValidationError, SizeExceededError
-from api2mcp.validation.pipeline import ValidationConfig, ValidationMiddleware, validate_tool_input
+from api2mcp.validation.exceptions import (
+    InjectionDetectedError,
+    SchemaValidationError,
+    SizeExceededError,
+)
 from api2mcp.validation.limits import SizeLimits
+from api2mcp.validation.pipeline import (
+    ValidationConfig,
+    ValidationMiddleware,
+    validate_tool_input,
+)
 
 _SCHEMA = {
     "type": "object",

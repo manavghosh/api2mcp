@@ -6,7 +6,8 @@ import hashlib
 import hmac
 import logging
 import os
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from api2mcp.orchestration.triggers.config import WebhookTriggerConfig
 

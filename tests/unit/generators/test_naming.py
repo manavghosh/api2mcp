@@ -1,6 +1,5 @@
 """Unit tests for tool naming convention (TASK-012, TASK-018)."""
 
-import pytest
 
 from api2mcp.core.ir_schema import Endpoint, HttpMethod
 from api2mcp.generators.naming import (

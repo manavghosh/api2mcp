@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import pytest
 
-from api2mcp.pool.config import HealthCheckConfig, HostPoolConfig, PoolConfig, RetryConfig
+from api2mcp.pool.config import (
+    HealthCheckConfig,
+    HostPoolConfig,
+    PoolConfig,
+    RetryConfig,
+)
 
 
 class TestHostPoolConfig:

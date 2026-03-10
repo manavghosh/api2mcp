@@ -166,7 +166,7 @@ class MCPToolRegistry:
     # Async context manager
     # ------------------------------------------------------------------
 
-    async def __aenter__(self) -> "MCPToolRegistry":
+    async def __aenter__(self) -> MCPToolRegistry:
         await self._exit_stack.__aenter__()
         return self
 
