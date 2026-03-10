@@ -37,7 +37,7 @@ jobs:
           pytest tests/unit/ --cov=src/api2mcp --cov-report=xml --cov-report=term-missing --cov-fail-under=80
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-${{ matrix.python-version }}
