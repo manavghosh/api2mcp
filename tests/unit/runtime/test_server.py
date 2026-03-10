@@ -248,3 +248,39 @@ async def test_execute_tool_applies_auth_headers() -> None:
     assert captured_headers.get("Authorization") == "Bearer test-token-123"
     assert isinstance(result, list)
     assert len(result) == 1
+
+
+@pytest.mark.asyncio
+async def test_execute_tool_passes_timeout_to_client() -> None:
+    """_execute_tool passes per-endpoint timeout to httpx.AsyncClient."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    from api2mcp.runtime.server import _execute_tool
+
+    endpoint = MagicMock()
+    endpoint.path = "/items"
+    endpoint.method = HttpMethod.GET
+    endpoint.parameters = []
+
+    tool_def = MCPToolDef(
+        name="get_items",
+        description="Get items",
+        endpoint=endpoint,
+        input_schema={"type": "object", "properties": {}},
+        body_param_names=[],
+        timeout=5.0,
+    )
+
+    with patch("httpx.AsyncClient") as mock_cls:
+        mock_client = AsyncMock()
+        mock_response = MagicMock()
+        mock_response.raise_for_status = MagicMock()
+        mock_response.headers = {}
+        mock_response.text = "ok"
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=False)
+        mock_client.request = AsyncMock(return_value=mock_response)
+        mock_cls.return_value = mock_client
+        await _execute_tool(tool_def, {}, "https://api.example.com")
+        _, kwargs = mock_cls.call_args
+        assert kwargs.get("timeout") == 5.0

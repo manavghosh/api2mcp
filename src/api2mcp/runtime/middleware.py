@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Request/response middleware for MCP runtime.
 
 Provides cross-cutting concerns for tool execution:

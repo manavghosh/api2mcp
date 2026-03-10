@@ -5,7 +5,7 @@ WORKDIR /app
 # Install dependencies first (cached layer)
 COPY pyproject.toml ./
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -e ".[http]"
+    pip install --no-cache-dir -e ".[dev]"
 
 # Copy source
 COPY src/ ./src/

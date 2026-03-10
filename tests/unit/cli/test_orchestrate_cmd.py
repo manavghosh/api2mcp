@@ -86,7 +86,7 @@ async def test_orchestrate_reactive_no_api_name_defaults_to_default():
 
     with (
         patch(
-            "langchain_anthropic.ChatAnthropic",
+            "api2mcp.orchestration.llm.LLMFactory.create",
             return_value=_make_model_mock(),
         ),
         patch(
@@ -106,6 +106,7 @@ async def test_orchestrate_reactive_no_api_name_defaults_to_default():
             prompt="test",
             graph_type="reactive",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=(),
@@ -132,7 +133,7 @@ async def test_orchestrate_reactive_with_api_name():
             return "ok"
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=_make_registry_mock(),
@@ -146,6 +147,7 @@ async def test_orchestrate_reactive_with_api_name():
             prompt="test",
             graph_type="reactive",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=("github",),
@@ -171,7 +173,7 @@ async def test_orchestrate_reactive_server_fallback():
             return "ok"
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=_make_registry_mock(),
@@ -185,6 +187,7 @@ async def test_orchestrate_reactive_server_fallback():
             prompt="test",
             graph_type="reactive",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={"myapi": "http://localhost:8001"},
             api_names=(),
@@ -214,7 +217,7 @@ async def test_orchestrate_planner_gets_api_names_list():
             return "ok"
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=_make_registry_mock(),
@@ -228,6 +231,7 @@ async def test_orchestrate_planner_gets_api_names_list():
             prompt="test",
             graph_type="planner",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=("github", "jira"),
@@ -253,7 +257,7 @@ async def test_orchestrate_planner_mode_forwarded():
             return "ok"
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=_make_registry_mock(),
@@ -267,6 +271,7 @@ async def test_orchestrate_planner_mode_forwarded():
             prompt="test",
             graph_type="planner",
             mode="parallel",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=("github",),
@@ -292,7 +297,7 @@ async def test_orchestrate_planner_no_api_names_defaults_to_default():
             return "ok"
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=_make_registry_mock(),
@@ -306,6 +311,7 @@ async def test_orchestrate_planner_no_api_names_defaults_to_default():
             prompt="test",
             graph_type="planner",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=(),
@@ -335,7 +341,7 @@ async def test_orchestrate_conversational_no_api_names():
             return "ok"
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=_make_registry_mock(),
@@ -351,6 +357,7 @@ async def test_orchestrate_conversational_no_api_names():
             prompt="test",
             graph_type="conversational",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=(),
@@ -376,7 +383,7 @@ async def test_orchestrate_conversational_with_api_names():
             return "ok"
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=_make_registry_mock(),
@@ -392,6 +399,7 @@ async def test_orchestrate_conversational_with_api_names():
             prompt="test",
             graph_type="conversational",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=("support",),
@@ -434,7 +442,7 @@ async def test_orchestrate_registry_is_never_none():
     fake_registry = MagicMock()
 
     with (
-        patch("langchain_anthropic.ChatAnthropic", return_value=_make_model_mock()),
+        patch("api2mcp.orchestration.llm.LLMFactory.create", return_value=_make_model_mock()),
         patch(
             "api2mcp.orchestration.adapters.registry.MCPToolRegistry",
             return_value=fake_registry,
@@ -448,6 +456,7 @@ async def test_orchestrate_registry_is_never_none():
             prompt="test",
             graph_type="reactive",
             mode="sequential",
+            provider=None,
             model_id="claude-sonnet-4-6",
             servers={},
             api_names=(),

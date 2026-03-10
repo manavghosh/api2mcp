@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """JSON Schema-based validation of tool call arguments.
 
 Uses ``jsonschema`` (already a project dependency) to validate the

@@ -1,0 +1,58 @@
+[
+  {
+    "description": "List items",
+    "inputSchema": {
+      "properties": {
+        "page": {
+          "description": "Page number",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "size": {
+          "description": "Page size",
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "name": "listitems"
+  },
+  {
+    "description": "Create an item",
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "description": "Item name",
+          "type": "string"
+        },
+        "value": {
+          "description": "Item value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "name": "createitem"
+  },
+  {
+    "description": "Get an item by ID",
+    "inputSchema": {
+      "properties": {
+        "itemId": {
+          "description": "The item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "itemId"
+      ],
+      "type": "object"
+    },
+    "name": "getitem"
+  }
+]

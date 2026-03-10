@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """OAuth 2.0 authentication provider.
 
 Supports:
@@ -43,7 +44,7 @@ class OAuth2Config:
     token_url: str = ""
     auth_url: str = ""  # Required for authorization_code flow
     redirect_uri: str = field(
-        default_factory=lambda: __import__("os").environ.get(
+        default_factory=lambda: os.environ.get(
             "API2MCP_OAUTH2_REDIRECT_URI", "http://localhost:8080/callback"
         )
     )

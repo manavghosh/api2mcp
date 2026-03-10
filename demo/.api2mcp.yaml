@@ -1,0 +1,49 @@
+# api2mcp configuration — demonstrates all major middleware options
+# Run: api2mcp serve task-mcp-server/ --config .api2mcp.yaml
+#
+# This file is used by run-demo-advanced.sh / run-demo-advanced.ps1 to start
+# the Task Manager MCP server on port 8090 with validation, rate limiting,
+# caching, connection pooling, and circuit breaking all enabled.
+
+host: "0.0.0.0"
+port: 8090
+transport: http
+log_level: info
+
+# --- Auth (uncomment ONE block to enable authentication) ---
+# auth:
+#   type: bearer
+#   token: "${API_TOKEN}"  # env var interpolation — set API_TOKEN in your shell
+# auth:
+#   type: api_key
+#   key_name: X-API-Key
+#   location: header       # or: query
+
+# --- Input Validation ---
+validation:
+  enabled: true
+  max_string_length: 10000
+  max_array_items: 1000
+
+# --- Rate Limiting ---
+rate_limit:
+  enabled: true
+  requests_per_minute: 120
+  burst: 20
+
+# --- Response Caching ---
+cache:
+  enabled: true
+  ttl: 300         # seconds — cached responses expire after 5 minutes
+  max_size: 500    # entries — LRU eviction when the cache is full
+
+# --- Connection Pool ---
+pool:
+  max_connections: 20
+  keepalive_timeout: 30
+
+# --- Circuit Breaker ---
+circuit_breaker:
+  enabled: true
+  failure_threshold: 5   # open after 5 consecutive failures
+  recovery_timeout: 60   # seconds before attempting recovery (half-open)

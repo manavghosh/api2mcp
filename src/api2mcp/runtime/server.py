@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """MCP Server Runner — lifecycle management for generated MCP servers.
 
 Provides MCPServerRunner that:
@@ -351,7 +352,8 @@ async def _execute_tool(
             )
         else:
             # Fallback: ephemeral client (original behaviour)
-            async with httpx.AsyncClient(base_url=base_url) as client:
+            timeout = getattr(tool_def, "timeout", None)
+            async with httpx.AsyncClient(base_url=base_url, timeout=timeout) as client:
                 response = await client.request(
                     method,
                     path,

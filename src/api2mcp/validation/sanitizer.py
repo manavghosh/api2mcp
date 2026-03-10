@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Injection attack detection and string sanitization.
 
 Detects the following attack categories in string field values:

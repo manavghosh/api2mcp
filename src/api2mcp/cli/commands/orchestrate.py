@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """``api2mcp orchestrate`` — run a LangGraph workflow from the CLI."""
 from __future__ import annotations
 
@@ -36,10 +37,20 @@ logger = logging.getLogger(__name__)
     help="Execution mode (planner graph only).",
 )
 @click.option(
-    "--model",
-    default="claude-sonnet-4-6",
+    "--provider",
+    default=None,
+    envvar="LLM_PROVIDER",
     show_default=True,
-    help="Claude model ID.",
+    type=click.Choice(["anthropic", "openai", "google"], case_sensitive=False),
+    help="LLM provider (overrides LLM_PROVIDER env var). Default: anthropic.",
+)
+@click.option(
+    "--model",
+    default=None,
+    envvar="LLM_MODEL",
+    show_default=True,
+    help="LLM model name (e.g. claude-opus-4-6, gpt-4o, gemini-2.0-flash). "
+         "Defaults to the provider's flagship model.",
 )
 @click.option(
     "--thread-id",
@@ -72,7 +83,8 @@ def orchestrate_cmd(
     servers: tuple[str, ...],
     graph: str,
     mode: str,
-    model: str,
+    provider: Optional[str],
+    model: Optional[str],
     thread_id: Optional[str],
     stream: bool,
     checkpoint: Optional[str],
@@ -84,10 +96,18 @@ def orchestrate_cmd(
     PROMPT is the natural-language task description.
 
     \b
-    Example:
+    Examples:
+      # Anthropic (default)
       api2mcp orchestrate "List open issues" \\
-        --server github=http://localhost:8001 \\
-        --graph reactive --stream
+        --server github=http://localhost:8001 --graph reactive --stream
+
+      # OpenAI GPT-4o
+      api2mcp orchestrate "Summarise tasks" \\
+        --provider openai --model gpt-4o --graph reactive
+
+      # Google Gemini
+      api2mcp orchestrate "Create a plan" \\
+        --provider google --model gemini-2.0-flash --graph planner
     """
     # Parse server name=url pairs
     server_map: dict[str, str] = {}
@@ -97,7 +117,13 @@ def orchestrate_cmd(
         name, url = entry.split("=", 1)
         server_map[name.strip()] = url.strip()
 
-    output.info(f"Running [bold]{graph}[/bold] graph with model [bold]{model}[/bold]")
+    effective_provider = provider or "anthropic"
+    effective_model = model or "(provider default)"
+    output.info(
+        f"Running [bold]{graph}[/bold] graph  "
+        f"provider=[bold]{effective_provider}[/bold]  "
+        f"model=[bold]{effective_model}[/bold]"
+    )
     if server_map:
         for sname, surl in server_map.items():
             output.info(f"  Server: {sname} → {surl}")
@@ -109,6 +135,7 @@ def orchestrate_cmd(
                 prompt=prompt,
                 graph_type=graph,
                 mode=mode,
+                provider=provider,
                 model_id=model,
                 servers=server_map,
                 api_names=api_names,
@@ -127,7 +154,8 @@ async def _run_workflow(
     prompt: str,
     graph_type: str,
     mode: str,
-    model_id: str,
+    provider: Optional[str],
+    model_id: Optional[str],
     servers: dict[str, str],
     api_names: tuple[str, ...],
     thread_id: Optional[str],
@@ -138,25 +166,23 @@ async def _run_workflow(
     """Build and run the requested LangGraph workflow."""
     from api2mcp.cli import output as out
 
-    _ = stream  # streaming handled by graph run() in future
+    _ = stream  # streaming via graph.stream() — future CLI flag
 
+    # Instantiate the LLM via the provider-agnostic factory
     try:
-        from langchain_anthropic import ChatAnthropic  # type: ignore[import-not-found]
-        model = ChatAnthropic(model=model_id)  # type: ignore[call-arg]
-    except ImportError:
-        raise click.ClickException(
-            "langchain-anthropic is required for orchestrate. "
-            "Install: pip install langchain-anthropic"
-        )
+        from api2mcp.orchestration.llm import LLMFactory, LLMConfigError
+        llm_model = LLMFactory.create(provider=provider, model=model_id)
+    except LLMConfigError as exc:
+        raise click.ClickException(str(exc)) from exc
 
     # Set up checkpointer
     checkpointer = None
     if checkpoint_db:
         try:
-            from langgraph.checkpoint.sqlite import SqliteSaver  # type: ignore[import-not-found]
-            checkpointer = SqliteSaver.from_conn_string(checkpoint_db)
-        except ImportError:
-            pass
+            from api2mcp.orchestration.checkpointing import CheckpointerFactory
+            checkpointer = CheckpointerFactory.sqlite(checkpoint_db)
+        except Exception:  # noqa: BLE001
+            out.warning(f"Could not create SQLite checkpointer at {checkpoint_db!r}; running without.")
 
     if servers:
         out.warning("Live MCP server connections not yet wired — running without tools.")
@@ -182,14 +208,14 @@ async def _run_workflow(
             if api_names
             else (list(servers.keys())[0] if servers else "default")
         )
-        graph = graph_cls(model, registry, api_name=single_api, checkpointer=checkpointer)
+        graph = graph_cls(llm_model, registry, api_name=single_api, checkpointer=checkpointer)
     elif graph_type == "planner":
         # PlannerGraph requires a list of api_names and an execution mode
         names = list(api_names) if api_names else (list(servers.keys()) or ["default"])
-        graph = graph_cls(model, registry, api_names=names, execution_mode=mode, checkpointer=checkpointer)
+        graph = graph_cls(llm_model, registry, api_names=names, execution_mode=mode, checkpointer=checkpointer)
     else:  # conversational
         names_or_none = list(api_names) if api_names else (list(servers.keys()) or None)
-        graph = graph_cls(model, registry, api_names=names_or_none, checkpointer=checkpointer)
+        graph = graph_cls(llm_model, registry, api_names=names_or_none, checkpointer=checkpointer)
 
     config = {"configurable": {"thread_id": thread_id or "default"}}
     result = await graph.run(prompt, config=config)

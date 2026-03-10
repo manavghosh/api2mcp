@@ -1,0 +1,36 @@
+# CODEOWNERS
+#
+# Each line assigns ownership of a path to one or more GitHub users or teams.
+# Owners are automatically requested for review when a PR touches their paths.
+#
+# Format: <path pattern>  <owner1> <owner2> ...
+# Docs:   https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything not matched below
+*                                   @<your-github-username>
+
+# Core parsing and generation pipeline
+src/api2mcp/parsers/                @<your-github-username>
+src/api2mcp/generators/             @<your-github-username>
+src/api2mcp/core/                   @<your-github-username>
+
+# Orchestration layer (LangGraph)
+src/api2mcp/orchestration/          @<your-github-username>
+
+# Security-sensitive modules — require Lead Maintainer review
+src/api2mcp/auth/                   @<your-github-username>
+src/api2mcp/secrets/                @<your-github-username>
+src/api2mcp/validation/             @<your-github-username>
+
+# CLI
+src/api2mcp/cli/                    @<your-github-username>
+
+# CI/CD and GitHub Actions
+.github/workflows/                  @<your-github-username>
+
+# Documentation
+docs/                               @<your-github-username>
+mkdocs.yml                          @<your-github-username>
+
+# Project configuration
+pyproject.toml                      @<your-github-username>

@@ -1,0 +1,99 @@
+"""Auto-generated tool handler for {{ tool.name }}.
+
+Endpoint: {{ tool.endpoint.method.value }} {{ tool.endpoint.path }}
+{% if tool.description %}Description: {{ tool.description }}{% endif %}
+"""
+
+from __future__ import annotations
+
+import json
+from typing import Any
+
+import httpx
+
+
+async def handle_{{ tool.name }}(
+    arguments: dict[str, Any],
+    client: httpx.AsyncClient,
+) -> str:
+    """Execute {{ tool.name }}.
+
+    {{ tool.description }}
+    """
+    {% set ep = tool.endpoint %}
+    {% set method = ep.method.value.lower() %}
+    # Build request
+    path = "{{ ep.path }}"
+    {% for param in ep.parameters if param.location.value == "path" %}
+    if "{{ param.name }}" in arguments:
+        path = path.replace("{{ '{' }}{{ param.name }}{{ '}' }}", str(arguments["{{ param.name }}"]))
+    {% endfor %}
+
+    params: dict[str, Any] = {}
+    {% for param in ep.parameters if param.location.value == "query" %}
+    if "{{ param.name }}" in arguments:
+        params["{{ param.name }}"] = arguments["{{ param.name }}"]
+    {% endfor %}
+
+    headers: dict[str, str] = {}
+    {% for param in ep.parameters if param.location.value == "header" %}
+    if "{{ param.name }}" in arguments:
+        headers["{{ param.name }}"] = str(arguments["{{ param.name }}"])
+    {% endfor %}
+
+    {% if ep.request_body %}
+    {% if ep.request_body.content_type == "application/json" %}
+    # Build JSON body from arguments
+    body_keys = {{ tool.body_param_names | tojson }}
+    json_body = {k: arguments[k] for k in body_keys if k in arguments}
+    response = await client.request(
+        "{{ method }}",
+        path,
+        params=params or None,
+        headers=headers or None,
+        json=json_body or None,
+    )
+    {% elif ep.request_body.content_type == "multipart/form-data" %}
+    # Multipart form data
+    files = {}
+    data = {}
+    for key, value in arguments.items():
+        if isinstance(value, bytes):
+            files[key] = value
+        else:
+            data[key] = value
+    response = await client.request(
+        "{{ method }}",
+        path,
+        params=params or None,
+        headers=headers or None,
+        data=data or None,
+        files=files or None,
+    )
+    {% else %}
+    body = arguments.get("body")
+    response = await client.request(
+        "{{ method }}",
+        path,
+        params=params or None,
+        headers=headers or None,
+        content=body,
+    )
+    {% endif %}
+    {% else %}
+    response = await client.request(
+        "{{ method }}",
+        path,
+        params=params or None,
+        headers=headers or None,
+    )
+    {% endif %}
+
+    response.raise_for_status()
+
+    {% if ep.responses %}
+    # Return response content
+    if response.headers.get("content-type", "").startswith("application/json"):
+        return json.dumps(response.json(), indent=2)
+    {% endif %}
+    return response.text or f"Status: {response.status_code}"

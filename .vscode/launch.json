@@ -1,0 +1,129 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug MCP Server (HTTP)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "api2mcp",
+      "args": [
+        "serve",
+        "${input:specFile}",
+        "--host", "127.0.0.1",
+        "--port", "8000",
+        "--transport", "http"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Debug MCP Server (stdio)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "api2mcp",
+      "args": [
+        "serve",
+        "${input:specFile}",
+        "--transport", "stdio"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Debug: Generate MCP Server",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "api2mcp",
+      "args": [
+        "generate",
+        "${input:specFile}",
+        "--output", "${input:outputDir}"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Debug: Hot Reload Dev Server",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "api2mcp",
+      "args": [
+        "dev",
+        "${input:specFile}",
+        "--host", "127.0.0.1",
+        "--port", "8000"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Debug: Interactive Wizard",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "api2mcp",
+      "args": ["wizard"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Run Tests (Current File)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "${file}",
+        "-v"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    },
+    {
+      "name": "Run All Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "tests/",
+        "-v",
+        "--tb=short"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "specFile",
+      "type": "promptString",
+      "description": "Path to the OpenAPI spec file (e.g. openapi.yaml)",
+      "default": "openapi.yaml"
+    },
+    {
+      "id": "outputDir",
+      "type": "promptString",
+      "description": "Output directory for generated MCP server",
+      "default": "./generated"
+    }
+  ]
+}

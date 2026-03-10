@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """``api2mcp serve`` command — start a generated MCP server."""
 
 from __future__ import annotations
@@ -245,6 +246,14 @@ def serve_cmd(
 
         generator = ToolGenerator()
         tools = generator.generate(api_spec)
+
+    # Emit PRE_SERVE hook
+    try:
+        from api2mcp.plugins import get_hook_manager
+        from api2mcp.plugins.hooks import PRE_SERVE
+        get_hook_manager().emit_sync(PRE_SERVE, api_spec=api_spec, tools=tools)
+    except Exception:  # noqa: BLE001
+        pass  # plugins are optional
 
     output.success(
         f"Serving [bold]{api_spec.title}[/bold] v{api_spec.version} "

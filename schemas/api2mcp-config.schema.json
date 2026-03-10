@@ -260,6 +260,33 @@
           "description": "AWS region for Secrets Manager (provider: aws)."
         }
       }
+    },
+    "orchestration": {
+      "type": "object",
+      "description": "LangGraph orchestration configuration.",
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string",
+          "default": "claude-sonnet-4-6",
+          "description": "Default Claude model ID for orchestration."
+        },
+        "graph": {
+          "type": "string",
+          "enum": ["reactive", "planner", "conversational"],
+          "default": "reactive",
+          "description": "Default graph type."
+        },
+        "checkpoint_db": {
+          "type": "string",
+          "description": "Path to SQLite DB for checkpointing (default: in-memory)."
+        },
+        "max_iterations": {
+          "type": "integer",
+          "default": 20,
+          "description": "Maximum graph iterations before termination."
+        }
+      }
     }
   }
 }
