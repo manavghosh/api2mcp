@@ -7,12 +7,17 @@ from pathlib import Path
 import pytest
 
 from api2mcp.plugins.base import BasePlugin
-from api2mcp.plugins.hooks import HookManager, POST_PARSE, PRE_GENERATE, POST_GENERATE, ON_TOOL_CALL
-from api2mcp.plugins.dependency import resolve_load_order, PluginDependencyError
+from api2mcp.plugins.dependency import PluginDependencyError
 from api2mcp.plugins.discovery import PluginLoader
+from api2mcp.plugins.hooks import (
+    ON_TOOL_CALL,
+    POST_GENERATE,
+    POST_PARSE,
+    PRE_GENERATE,
+    HookManager,
+)
 from api2mcp.plugins.manager import PluginManager
 from api2mcp.plugins.sandbox import PluginSandbox
-
 
 # ---------------------------------------------------------------------------
 # Helpers / fixtures

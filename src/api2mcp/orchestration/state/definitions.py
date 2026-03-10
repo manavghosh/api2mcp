@@ -35,7 +35,8 @@ Usage::
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Sequence, TypedDict
+from collections.abc import Sequence
+from typing import Annotated, Any, TypedDict
 
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages

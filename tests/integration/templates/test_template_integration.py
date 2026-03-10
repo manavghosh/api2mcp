@@ -10,8 +10,7 @@ import yaml
 
 from api2mcp.templates.installer import InstalledTemplate, TemplateInstaller
 from api2mcp.templates.manifest import TemplateManifest
-from api2mcp.templates.registry import RegistryIndex, TemplateRegistry
-
+from api2mcp.templates.registry import TemplateRegistry
 
 # ---------------------------------------------------------------------------
 # Shared fixture data

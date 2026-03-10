@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 """Routing: route to next plan step, aggregation, or completion."""
 from __future__ import annotations
+
 from typing import Any
 
 

@@ -66,7 +66,7 @@ def validate_openapi_structure(doc: dict[str, Any]) -> list[ParseError]:
                 if not isinstance(srv, dict):
                     errors.append(
                         ParseError(
-                            f"Server entry must be an object",
+                            "Server entry must be an object",
                             path=f"servers[{i}]",
                         )
                     )

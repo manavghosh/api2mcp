@@ -1,6 +1,5 @@
 """Unit tests for transport configuration (TASK-025, TASK-026)."""
 
-import pytest
 
 from api2mcp.runtime.transport import TransportConfig, TransportType
 

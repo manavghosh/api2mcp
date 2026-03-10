@@ -1,7 +1,9 @@
 """Tests for API spec diff logic."""
 from __future__ import annotations
+
 from unittest.mock import MagicMock
-from api2mcp.core.diff import diff_specs, DiffResult
+
+from api2mcp.core.diff import DiffResult, diff_specs
 
 
 def _tool(name: str, params: list[str] | None = None) -> MagicMock:

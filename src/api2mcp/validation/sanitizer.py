@@ -24,7 +24,6 @@ from typing import Any
 
 from api2mcp.validation.exceptions import InjectionDetectedError
 
-
 # ---------------------------------------------------------------------------
 # Compiled patterns
 # ---------------------------------------------------------------------------

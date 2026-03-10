@@ -20,12 +20,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from api2mcp.orchestration.graphs.planner import (
-    ExecutionStep,
     PlannerGraph,
-    ToolCallStatus,
-    _substitute_variables,
 )
-
 
 # ---------------------------------------------------------------------------
 # Shared mock factories

@@ -8,9 +8,13 @@ import httpx
 import pytest
 
 from api2mcp.auth.base import RequestContext
-from api2mcp.auth.providers.oauth2 import OAuth2Config, OAuth2Provider, _pkce_challenge, _pkce_verifier
+from api2mcp.auth.providers.oauth2 import (
+    OAuth2Config,
+    OAuth2Provider,
+    _pkce_challenge,
+    _pkce_verifier,
+)
 from api2mcp.auth.token_store import TokenStore
-
 
 # ---------------------------------------------------------------------------
 # PKCE helpers

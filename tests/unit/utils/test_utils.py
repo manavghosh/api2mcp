@@ -1,5 +1,6 @@
 """Tests for shared utility helpers."""
 from __future__ import annotations
+
 import pytest
 
 
@@ -11,8 +12,9 @@ def test_utcnow_iso_format():
 
 
 def test_utcnow_returns_datetime():
-    from api2mcp.utils.timestamps import utcnow
     from datetime import datetime
+
+    from api2mcp.utils.timestamps import utcnow
     result = utcnow()
     assert isinstance(result, datetime)
     assert result.tzinfo is not None

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 import click
 
@@ -39,8 +38,8 @@ logger = logging.getLogger(__name__)
 def export_cmd(
     server_dir: Path,
     fmt: str,
-    output_path: Optional[Path],
-    name: Optional[str],
+    output_path: Path | None,
+    name: str | None,
     version: str,
 ) -> None:
     """Export a generated MCP server as a standalone distributable package.
@@ -56,10 +55,14 @@ def export_cmd(
       api2mcp export ./my-server --format docker
       api2mcp export ./my-server --format zip --output dist/
     """
-    from api2mcp.generators.exporter import export_as_docker, export_as_wheel, export_as_zip
+    from api2mcp.generators.exporter import (
+        export_as_docker,
+        export_as_wheel,
+        export_as_zip,
+    )
 
     pkg_name = name or server_dir.name
-    resolved_output = output_path or Path(".")
+    resolved_output = output_path or Path()
 
     if fmt == "docker":
         result = export_as_docker(server_dir, resolved_output)

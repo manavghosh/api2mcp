@@ -1,6 +1,5 @@
 """Tests for MCPPromptGenerator."""
-import pytest
-from api2mcp.generators.prompt import MCPPromptDef, MCPPromptGenerator
+
 from api2mcp.core.ir_schema import (
     APISpec,
     Endpoint,
@@ -9,6 +8,7 @@ from api2mcp.core.ir_schema import (
     ParameterLocation,
     SchemaRef,
 )
+from api2mcp.generators.prompt import MCPPromptGenerator
 
 
 def _make_spec() -> APISpec:

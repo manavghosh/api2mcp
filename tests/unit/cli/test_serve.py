@@ -1,11 +1,8 @@
 """Tests for _build_middleware_stack helper in serve command."""
 from __future__ import annotations
 
-import pytest
-
 from api2mcp.cli.commands.serve import _build_middleware_stack
 from api2mcp.runtime.middleware import MiddlewareStack
-
 
 # ---------------------------------------------------------------------------
 # 1. Empty config

@@ -21,7 +21,6 @@ from api2mcp.circuitbreaker.config import CircuitBreakerConfig, EndpointConfig
 from api2mcp.circuitbreaker.middleware import CircuitBreakerMiddleware
 from api2mcp.circuitbreaker.state import CircuitState
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

@@ -7,12 +7,11 @@ from pathlib import Path
 import pytest
 
 from api2mcp.cli.config import (
+    _interpolate_env_vars,
     find_config_file,
     load_config,
     merge_config,
-    _interpolate_env_vars,
 )
-
 
 # ---------------------------------------------------------------------------
 # _interpolate_env_vars

@@ -108,8 +108,8 @@ def test_parse_minimal_spec(minimal_spec: Path) -> None:
 @pytest.mark.e2e
 def test_generate_tools_from_petstore(petstore_spec: Path) -> None:
     """Tool generator produces at least one tool from the petstore spec."""
-    from api2mcp.parsers.openapi import OpenAPIParser
     from api2mcp.generators.tool import ToolGenerator
+    from api2mcp.parsers.openapi import OpenAPIParser
 
     parser = OpenAPIParser()
     spec = asyncio.run(parser.parse(petstore_spec))
@@ -126,6 +126,7 @@ def test_generate_tools_from_petstore(petstore_spec: Path) -> None:
 def test_generate_writes_output_dir(minimal_spec: Path, tmp_path: Path) -> None:
     """generate_cmd writes a non-empty output directory."""
     from click.testing import CliRunner
+
     from api2mcp.cli.main import cli
 
     out = tmp_path / "generated"
@@ -145,8 +146,8 @@ def test_generate_writes_output_dir(minimal_spec: Path, tmp_path: Path) -> None:
 @pytest.mark.e2e
 def test_pipeline_tool_names_are_operation_ids(minimal_spec: Path) -> None:
     """Generated tool names correspond to OpenAPI operationIds."""
-    from api2mcp.parsers.openapi import OpenAPIParser
     from api2mcp.generators.tool import ToolGenerator
+    from api2mcp.parsers.openapi import OpenAPIParser
 
     parser = OpenAPIParser()
     spec = asyncio.run(parser.parse(minimal_spec))
@@ -161,6 +162,7 @@ def test_pipeline_tool_names_are_operation_ids(minimal_spec: Path) -> None:
 def test_validate_command_on_minimal_spec(minimal_spec: Path) -> None:
     """api2mcp validate returns exit code 0 for a valid spec."""
     from click.testing import CliRunner
+
     from api2mcp.cli.main import cli
 
     runner = CliRunner()
@@ -172,7 +174,9 @@ def test_validate_command_on_minimal_spec(minimal_spec: Path) -> None:
 def test_validate_command_json_format(minimal_spec: Path) -> None:
     """api2mcp validate --output-format json returns an empty JSON array on success."""
     import json
+
     from click.testing import CliRunner
+
     from api2mcp.cli.main import cli
 
     runner = CliRunner()
@@ -189,7 +193,9 @@ def test_validate_command_json_format(minimal_spec: Path) -> None:
 def test_diff_identical_specs_exit_0(minimal_spec: Path, tmp_path: Path) -> None:
     """api2mcp diff with identical specs exits 0 (no breaking changes)."""
     import shutil
+
     from click.testing import CliRunner
+
     from api2mcp.cli.main import cli
 
     copy = tmp_path / "openapi_copy.yaml"

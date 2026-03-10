@@ -15,7 +15,6 @@ import yaml
 from api2mcp.core.ir_schema import HttpMethod, ParameterLocation
 from api2mcp.parsers.swagger import MigrationSeverity, SwaggerParser
 
-
 # ---------------------------------------------------------------------------
 # Full Petstore-style Swagger 2.0 fixture
 # ---------------------------------------------------------------------------

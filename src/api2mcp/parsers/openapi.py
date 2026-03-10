@@ -34,9 +34,9 @@ from api2mcp.core.ir_schema import (
     Endpoint,
     HttpMethod,
     ModelDef,
+    PaginationConfig,
     Parameter,
     ParameterLocation,
-    PaginationConfig,
     RequestBody,
     Response,
     SchemaRef,
@@ -439,8 +439,9 @@ def _extract_auth_schemes(
 #  Structural Validation — delegates to core.validator
 # --------------------------------------------------------------------------- #
 
-from api2mcp.core.validator import validate_openapi_structure as _validate_structure  # noqa: E402
-
+from api2mcp.core.validator import (
+    validate_openapi_structure as _validate_structure,  # noqa: E402
+)
 
 # --------------------------------------------------------------------------- #
 #  OpenAPI Parser

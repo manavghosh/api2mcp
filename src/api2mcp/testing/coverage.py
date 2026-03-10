@@ -20,12 +20,11 @@ Usage::
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from api2mcp.generators.tool import MCPToolDef
 from api2mcp.testing.client import ToolResult
-
 
 # ---------------------------------------------------------------------------
 # CoverageReport

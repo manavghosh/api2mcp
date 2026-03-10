@@ -8,6 +8,7 @@ from typing import Any
 
 import pytest
 
+from api2mcp.core.ir_schema import AuthType, HttpMethod, ParameterLocation
 from api2mcp.parsers.postman import (
     PostmanParser,
     _to_operation_id,
@@ -16,8 +17,6 @@ from api2mcp.parsers.postman import (
     parse_auth,
     substitute_variables,
 )
-from api2mcp.core.ir_schema import AuthType, HttpMethod, ParameterLocation
-
 
 # ---------------------------------------------------------------------------
 # Minimal collection fixture

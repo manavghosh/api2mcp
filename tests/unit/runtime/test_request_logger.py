@@ -1,6 +1,5 @@
 """Tests for request/response logging with field redaction."""
 from __future__ import annotations
-import pytest
 
 
 def test_redact_token_field():

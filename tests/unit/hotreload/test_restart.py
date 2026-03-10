@@ -4,13 +4,12 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 
 from api2mcp.hotreload.restart import HotReloadServer
 from api2mcp.hotreload.watcher import ChangeEvent, ChangeType
-
 
 # ---------------------------------------------------------------------------
 # HotReloadServer.__init__

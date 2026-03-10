@@ -16,7 +16,7 @@ so behaviour is familiar and consistent.
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable, Awaitable
+from collections.abc import Awaitable, Callable
 from typing import Any, TypeVar
 
 import httpx

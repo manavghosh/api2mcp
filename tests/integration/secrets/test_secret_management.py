@@ -11,7 +11,6 @@ from api2mcp.secrets.masking import SecretRegistry
 from api2mcp.secrets.providers.encrypted_file import EncryptedFileProvider
 from api2mcp.secrets.providers.env import EnvironmentProvider
 
-
 # ---------------------------------------------------------------------------
 # Environment variable resolution
 # ---------------------------------------------------------------------------

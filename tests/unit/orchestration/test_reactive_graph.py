@@ -17,7 +17,6 @@ import pytest
 from api2mcp.orchestration.adapters.registry import MCPToolRegistry
 from api2mcp.orchestration.graphs.reactive import ReactiveGraph
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -113,7 +112,7 @@ class TestBuildGraph:
             "api2mcp.orchestration.graphs.reactive.create_react_agent",
             return_value=compiled,
         ) as mock_cra:
-            graph = ReactiveGraph(_make_model(), registry, api_name="github")
+            _graph = ReactiveGraph(_make_model(), registry, api_name="github")
 
         mock_cra.assert_called_once()
 
@@ -257,7 +256,7 @@ class TestRun:
     async def test_run_reraises_timeout_error(self) -> None:
         registry = _make_registry(["github:list_issues"])
         compiled = _make_compiled_graph()
-        compiled.ainvoke = AsyncMock(side_effect=asyncio.TimeoutError())
+        compiled.ainvoke = AsyncMock(side_effect=TimeoutError())
 
         with patch(
             "api2mcp.orchestration.graphs.reactive.create_react_agent",
@@ -384,7 +383,7 @@ class TestStream:
         registry = _make_registry(["github:list_issues"])
 
         async def _bad_stream(*_: Any, **__: Any):
-            raise asyncio.TimeoutError()
+            raise TimeoutError()
             yield  # make it a generator
 
         compiled = MagicMock()

@@ -16,7 +16,6 @@ from api2mcp.plugins.hooks import (
     HookRegistration,
 )
 
-
 # ---------------------------------------------------------------------------
 # Known hooks constants
 # ---------------------------------------------------------------------------
@@ -45,7 +44,8 @@ def test_hook_registration_repr() -> None:
 
 def test_register_hook_records_callback() -> None:
     manager = HookManager()
-    cb = lambda **kw: None
+    def cb(**kw: object) -> None:
+        pass
     manager.register_hook(POST_PARSE, cb, plugin_id="p1")
     assert manager.hook_count(POST_PARSE) == 1
 

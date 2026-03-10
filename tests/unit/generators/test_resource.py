@@ -1,7 +1,7 @@
 """Tests for MCPResourceGenerator."""
-import pytest
-from api2mcp.generators.resource import MCPResourceDef, MCPResourceGenerator
+
 from api2mcp.core.ir_schema import APISpec, Endpoint, HttpMethod
+from api2mcp.generators.resource import MCPResourceGenerator
 
 
 def _make_spec(method: HttpMethod = HttpMethod.GET) -> APISpec:

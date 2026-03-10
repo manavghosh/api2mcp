@@ -7,15 +7,18 @@ concurrent access, idle cleanup, and recovery after connection failure.
 from __future__ import annotations
 
 import asyncio
-from typing import Any
 
 import httpx
 import pytest
 import respx
 
-from api2mcp.pool.config import HealthCheckConfig, HostPoolConfig, PoolConfig, RetryConfig
+from api2mcp.pool.config import (
+    HealthCheckConfig,
+    HostPoolConfig,
+    PoolConfig,
+    RetryConfig,
+)
 from api2mcp.pool.manager import ConnectionPoolManager
-
 
 # ---------------------------------------------------------------------------
 # Scenario: Persistent connections — single client per host

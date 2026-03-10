@@ -7,13 +7,11 @@ supporting success, error, and edge-case scenarios.
 
 from __future__ import annotations
 
-import json
 import random
 import string
 from typing import Any
 
-from api2mcp.core.ir_schema import APISpec, Endpoint, Parameter, ParameterLocation
-
+from api2mcp.core.ir_schema import APISpec, Endpoint, ParameterLocation
 
 # ---------------------------------------------------------------------------
 # Scenario types

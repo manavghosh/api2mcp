@@ -17,7 +17,6 @@ from api2mcp.orchestration.streaming import (
     stream_graph,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -136,7 +135,7 @@ class TestStreamInterruption:
     async def test_error_event_emitted_before_reraise(self) -> None:
         async def _bad_stream(*_: Any, **__: Any):
             raise RuntimeError("stream interrupted")
-            yield  # noqa: unreachable
+            yield  # pragma: no cover
 
         graph = MagicMock()
         graph.stream = _bad_stream
@@ -154,7 +153,7 @@ class TestStreamInterruption:
     async def test_progress_start_emitted_before_error(self) -> None:
         async def _bad_stream(*_: Any, **__: Any):
             raise ConnectionError("connection lost")
-            yield  # noqa: unreachable
+            yield  # pragma: no cover
 
         graph = MagicMock()
         graph.stream = _bad_stream

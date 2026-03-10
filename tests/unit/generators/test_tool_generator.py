@@ -3,8 +3,6 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from api2mcp.core.ir_schema import (
     APISpec,
     Endpoint,
@@ -18,7 +16,6 @@ from api2mcp.core.ir_schema import (
     ServerInfo,
 )
 from api2mcp.generators.tool import MCPToolDef, ToolGenerator
-
 
 # --- Fixtures ---
 

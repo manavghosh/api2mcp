@@ -48,7 +48,6 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # CheckpointerFactory
 # ---------------------------------------------------------------------------
@@ -161,7 +160,9 @@ class CheckpointerFactory:
     @staticmethod
     def _create_memory() -> Any:
         """Return a :class:`~langgraph.checkpoint.memory.MemorySaver`."""
-        from langgraph.checkpoint.memory import MemorySaver  # type: ignore[import-untyped]
+        from langgraph.checkpoint.memory import (
+            MemorySaver,  # type: ignore[import-untyped]
+        )
 
         return MemorySaver()
 
@@ -189,7 +190,9 @@ class CheckpointerFactory:
             ImportError: If ``langgraph-checkpoint-sqlite`` is not installed.
         """
         try:
-            from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver  # type: ignore[import-untyped]
+            from langgraph.checkpoint.sqlite.aio import (
+                AsyncSqliteSaver,  # type: ignore[import-untyped]
+            )
         except ImportError as exc:
             raise ImportError(
                 "SQLite checkpointing requires the 'langgraph-checkpoint-sqlite' "
@@ -226,7 +229,9 @@ class CheckpointerFactory:
                 are not installed.
         """
         try:
-            from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver  # type: ignore[import-untyped]
+            from langgraph.checkpoint.postgres.aio import (
+                AsyncPostgresSaver,  # type: ignore[import-untyped]
+            )
         except ImportError as exc:
             raise ImportError(
                 "PostgreSQL checkpointing requires the "

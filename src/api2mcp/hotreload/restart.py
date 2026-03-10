@@ -34,9 +34,8 @@ from __future__ import annotations
 import asyncio
 import logging
 from pathlib import Path
-from typing import Any
 
-from api2mcp.hotreload.watcher import ChangeEvent, ChangeType, FileWatcher
+from api2mcp.hotreload.watcher import ChangeEvent, FileWatcher
 
 logger = logging.getLogger(__name__)
 
@@ -133,7 +132,6 @@ class HotReloadServer:
     async def _regenerate(self) -> None:
         """Re-parse the spec and regenerate output files."""
         try:
-            import asyncio as _asyncio
 
             from api2mcp.generators.tool import ToolGenerator
             from api2mcp.parsers.openapi import OpenAPIParser
@@ -178,7 +176,7 @@ class HotReloadServer:
                 asyncio.shield(self._server_task),
                 timeout=_DRAIN_TIMEOUT,
             )
-        except (asyncio.TimeoutError, asyncio.CancelledError) as exc:
+        except (TimeoutError, asyncio.CancelledError) as exc:
             logger.debug("Server drain timeout/cancelled: %s", exc)
         logger.debug("HotReloadServer: server task stopped")
 

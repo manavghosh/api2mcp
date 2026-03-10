@@ -7,12 +7,11 @@ import asyncio
 import pytest
 
 from api2mcp.plugins.sandbox import (
+    _BLOCKED_BUILTINS,
     PluginSandbox,
     SandboxViolation,
     make_restricted_builtins,
-    _BLOCKED_BUILTINS,
 )
-
 
 # ---------------------------------------------------------------------------
 # PluginSandbox.call — basic invocation

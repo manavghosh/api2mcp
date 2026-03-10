@@ -17,7 +17,6 @@ from api2mcp.cache.config import CacheConfig
 from api2mcp.cache.memory import MemoryCacheBackend
 from api2mcp.cache.middleware import CacheMiddleware
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import importlib
 import logging
-from typing import Optional
 
 import click
 
@@ -83,11 +82,11 @@ def orchestrate_cmd(
     servers: tuple[str, ...],
     graph: str,
     mode: str,
-    provider: Optional[str],
-    model: Optional[str],
-    thread_id: Optional[str],
+    provider: str | None,
+    model: str | None,
+    thread_id: str | None,
     stream: bool,
-    checkpoint: Optional[str],
+    checkpoint: str | None,
     output_format: str,
     api_names: tuple[str, ...],
 ) -> None:
@@ -154,13 +153,13 @@ async def _run_workflow(
     prompt: str,
     graph_type: str,
     mode: str,
-    provider: Optional[str],
-    model_id: Optional[str],
+    provider: str | None,
+    model_id: str | None,
     servers: dict[str, str],
     api_names: tuple[str, ...],
-    thread_id: Optional[str],
+    thread_id: str | None,
     stream: bool,
-    checkpoint_db: Optional[str],
+    checkpoint_db: str | None,
     output_format: str,
 ) -> None:
     """Build and run the requested LangGraph workflow."""
@@ -169,8 +168,8 @@ async def _run_workflow(
     _ = stream  # streaming via graph.stream() — future CLI flag
 
     # Instantiate the LLM via the provider-agnostic factory
+    from api2mcp.orchestration.llm import LLMConfigError, LLMFactory
     try:
-        from api2mcp.orchestration.llm import LLMFactory, LLMConfigError
         llm_model = LLMFactory.create(provider=provider, model=model_id)
     except LLMConfigError as exc:
         raise click.ClickException(str(exc)) from exc
@@ -180,7 +179,7 @@ async def _run_workflow(
     if checkpoint_db:
         try:
             from api2mcp.orchestration.checkpointing import CheckpointerFactory
-            checkpointer = CheckpointerFactory.sqlite(checkpoint_db)
+            checkpointer = CheckpointerFactory.create({"backend": "sqlite", "path": checkpoint_db})
         except Exception:  # noqa: BLE001
             out.warning(f"Could not create SQLite checkpointer at {checkpoint_db!r}; running without.")
 

@@ -78,13 +78,17 @@ def _build_middleware_stack(
 
     # --- Concurrency middleware ---
     if effective.get("concurrency"):
-        from api2mcp.concurrency.middleware import ConcurrencyMiddleware  # noqa: PLC0415
+        from api2mcp.concurrency.middleware import (
+            ConcurrencyMiddleware,  # noqa: PLC0415
+        )
 
         layers.append(ConcurrencyMiddleware())
 
     # --- Circuit breaker middleware ---
     if effective.get("circuit_breaker"):
-        from api2mcp.circuitbreaker.middleware import CircuitBreakerMiddleware  # noqa: PLC0415
+        from api2mcp.circuitbreaker.middleware import (
+            CircuitBreakerMiddleware,  # noqa: PLC0415
+        )
 
         layers.append(CircuitBreakerMiddleware())
 

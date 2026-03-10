@@ -19,7 +19,11 @@ import jinja2
 
 from api2mcp.core.exceptions import GeneratorException
 from api2mcp.core.ir_schema import APISpec, Endpoint, ParameterLocation
-from api2mcp.generators.naming import derive_tool_name, resolve_collisions, sanitize_name
+from api2mcp.generators.naming import (
+    derive_tool_name,
+    resolve_collisions,
+    sanitize_name,
+)
 from api2mcp.generators.schema_mapper import build_input_schema
 
 logger = logging.getLogger(__name__)

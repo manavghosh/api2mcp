@@ -4,11 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from api2mcp.plugins.base import BasePlugin
 from api2mcp.plugins.discovery import PluginLoader
-
 
 # ---------------------------------------------------------------------------
 # Helpers

@@ -21,7 +21,6 @@ import logging
 import re
 import threading
 
-
 _MASK = "***"
 _MIN_SECRET_LEN = 4  # Don't bother masking very short values
 

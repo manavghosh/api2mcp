@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import pytest
-
 from api2mcp.cache.base import CachedResponse, cache_key
-
 
 # ---------------------------------------------------------------------------
 # cache_key

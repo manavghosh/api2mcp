@@ -21,10 +21,9 @@ class TestConcurrencyLimiter:
 
     async def test_stats_track_peak(self) -> None:
         limiter = ConcurrencyLimiter(ConcurrencyConfig(max_concurrent=10))
-        async with limiter.acquire("t"):
-            async with limiter.acquire("t"):
-                assert limiter.stats.current_active == 2
-                assert limiter.stats.peak_active == 2
+        async with limiter.acquire("t"), limiter.acquire("t"):
+            assert limiter.stats.current_active == 2
+            assert limiter.stats.peak_active == 2
         assert limiter.stats.peak_active == 2  # peak preserved
 
     async def test_stats_total_acquired(self) -> None:

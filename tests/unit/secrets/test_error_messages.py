@@ -1,5 +1,6 @@
 """Tests for helpful secrets backend error messages."""
 from __future__ import annotations
+
 import pytest
 
 

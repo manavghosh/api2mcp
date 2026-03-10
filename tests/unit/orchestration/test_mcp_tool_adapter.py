@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pydantic import BaseModel
@@ -14,7 +14,6 @@ from api2mcp.orchestration.adapters.base import (
     _extract_text,
     _json_schema_to_pydantic,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -68,7 +67,7 @@ class TestJsonSchemaToPydantic:
             "required": ["name"],
         }
         model = _json_schema_to_pydantic("mytool", schema)
-        with pytest.raises(Exception):
+        with pytest.raises(Exception):  # noqa: B017
             model()  # missing required field
 
     def test_optional_fields_default_to_none(self) -> None:
@@ -274,7 +273,7 @@ class TestAdapterMetrics:
     @pytest.mark.asyncio
     async def test_call_count_increments(self) -> None:
         session = _make_session()
-        mcp_tool = _make_mcp_tool(input_schema={})
+        _mcp_tool = _make_mcp_tool(input_schema={})
         adapter = MCPToolAdapter(
             session=session,
             mcp_tool_name="list_issues",

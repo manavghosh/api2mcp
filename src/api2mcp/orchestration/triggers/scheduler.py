@@ -5,7 +5,8 @@ from __future__ import annotations
 import asyncio
 import datetime
 import logging
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from api2mcp.orchestration.triggers.config import ScheduleTriggerConfig
 

@@ -81,7 +81,7 @@ class ConnectionPoolManager:
         self._started = False
         logger.debug("ConnectionPoolManager closed %d client(s)", len(clients))
 
-    async def __aenter__(self) -> "ConnectionPoolManager":
+    async def __aenter__(self) -> ConnectionPoolManager:
         await self.start()
         return self
 

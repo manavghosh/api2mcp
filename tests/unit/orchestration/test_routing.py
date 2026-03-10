@@ -1,6 +1,5 @@
 """Unit tests for orchestration routing functions."""
 from __future__ import annotations
-import pytest
 
 
 def test_routing_module_importable():
@@ -9,8 +8,9 @@ def test_routing_module_importable():
 
 
 def test_should_continue_with_tool_calls():
-    from api2mcp.orchestration.routing.should_continue import should_continue
     from unittest.mock import MagicMock
+
+    from api2mcp.orchestration.routing.should_continue import should_continue
     msg = MagicMock()
     msg.tool_calls = [{"name": "some_tool"}]
     state = {"messages": [msg]}
@@ -18,8 +18,9 @@ def test_should_continue_with_tool_calls():
 
 
 def test_should_continue_without_tool_calls():
-    from api2mcp.orchestration.routing.should_continue import should_continue
     from langgraph.graph import END
+
+    from api2mcp.orchestration.routing.should_continue import should_continue
 
     class FakeMsg:
         tool_calls = []
@@ -30,8 +31,9 @@ def test_should_continue_without_tool_calls():
 
 
 def test_should_continue_empty_messages():
-    from api2mcp.orchestration.routing.should_continue import should_continue
     from langgraph.graph import END
+
+    from api2mcp.orchestration.routing.should_continue import should_continue
     state = {"messages": []}
     assert should_continue(state) == END
 

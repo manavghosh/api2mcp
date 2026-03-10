@@ -1,6 +1,5 @@
 """Unit tests for IR-to-JSON-Schema mapper (TASK-013, TASK-015, TASK-018)."""
 
-import pytest
 
 from api2mcp.core.ir_schema import (
     Endpoint,

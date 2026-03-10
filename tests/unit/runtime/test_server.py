@@ -1,8 +1,9 @@
 """Unit tests for MCPServerRunner (TASK-021 through TASK-028)."""
 
+from typing import Any
+
 import pytest
 from mcp.server.lowlevel import Server
-from typing import Any
 
 from api2mcp.core.ir_schema import (
     APISpec,
@@ -10,7 +11,6 @@ from api2mcp.core.ir_schema import (
     HttpMethod,
     Parameter,
     ParameterLocation,
-    RequestBody,
     SchemaRef,
     SchemaType,
     ServerInfo,
@@ -19,7 +19,6 @@ from api2mcp.generators.tool import MCPToolDef
 from api2mcp.runtime.middleware import MiddlewareStack
 from api2mcp.runtime.server import MCPServerRunner
 from api2mcp.runtime.transport import TransportConfig, TransportType
-
 
 # --- Fixtures ---
 

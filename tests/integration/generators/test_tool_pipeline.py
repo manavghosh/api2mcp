@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from api2mcp.generators.tool import MCPToolDef, ToolGenerator
+from api2mcp.generators.tool import ToolGenerator
 from api2mcp.parsers.openapi import OpenAPIParser
 
 FIXTURES_DIR = Path(__file__).parent.parent.parent / "fixtures"

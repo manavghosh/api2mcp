@@ -3,17 +3,15 @@
 from __future__ import annotations
 
 import asyncio
-import time
+from collections.abc import AsyncIterator
 from pathlib import Path
-from typing import AsyncIterator
 from unittest.mock import AsyncMock, patch
 
 import pytest
 import yaml
 
-from api2mcp.hotreload.watcher import ChangeEvent, ChangeType, FileWatcher
 from api2mcp.hotreload.restart import HotReloadServer
-
+from api2mcp.hotreload.watcher import ChangeEvent, ChangeType, FileWatcher
 
 # ---------------------------------------------------------------------------
 # Shared spec fixture
@@ -170,7 +168,7 @@ async def test_hot_reload_server_restarts_on_spec_change(
         with patch.object(srv, "_start_server", new_callable=AsyncMock):
             try:
                 await asyncio.wait_for(srv.run(), timeout=2.0)
-            except (asyncio.CancelledError, asyncio.TimeoutError):
+            except (TimeoutError, asyncio.CancelledError):
                 pass
 
     assert len(handled) == 1
@@ -211,6 +209,7 @@ async def test_hot_reload_server_regenerate_tolerates_bad_spec(
 def test_serve_cmd_watch_flag_help() -> None:
     """The --watch flag is exposed in the serve command help."""
     from click.testing import CliRunner
+
     from api2mcp.cli.main import cli
 
     runner = CliRunner()

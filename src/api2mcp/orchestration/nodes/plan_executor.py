@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 """Plan execution node — executes one step from execution_plan."""
 from __future__ import annotations
+
 import logging
 from typing import Any
 
