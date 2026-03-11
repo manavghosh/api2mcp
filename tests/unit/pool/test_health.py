@@ -58,7 +58,7 @@ class TestPoolHealthChecker:
 
         checker = self._make_checker()
         checker.register(base)
-        checker._records[base].last_checked = 0.0  # force probe
+        checker._records[base].last_checked = float("-inf")  # force probe
 
         async with httpx.AsyncClient() as client:
             result = await checker.probe(base, client)
@@ -81,7 +81,7 @@ class TestPoolHealthChecker:
             )
         )
         checker.register(base)
-        checker._records[base].last_checked = 0.0
+        checker._records[base].last_checked = float("-inf")
 
         async with httpx.AsyncClient() as client:
             result = await checker.probe(base, client)
@@ -125,7 +125,7 @@ class TestPoolHealthChecker:
 
         checker = self._make_checker()
         checker.register(base)
-        checker._records[base].last_checked = 0.0
+        checker._records[base].last_checked = float("-inf")
 
         async with httpx.AsyncClient() as client:
             result = await checker.probe(base, client)
@@ -143,8 +143,8 @@ class TestPoolHealthChecker:
         checker = self._make_checker()
         checker.register(base1)
         checker.register(base2)
-        checker._records[base1].last_checked = 0.0
-        checker._records[base2].last_checked = 0.0
+        checker._records[base1].last_checked = float("-inf")
+        checker._records[base2].last_checked = float("-inf")
 
         async with httpx.AsyncClient() as c1, httpx.AsyncClient() as c2:
             status = await checker.probe_all({base1: c1, base2: c2})

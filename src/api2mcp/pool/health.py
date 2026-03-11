@@ -45,7 +45,7 @@ class HostHealth:
 
     base_url: str
     healthy: bool = True
-    last_checked: float = 0.0
+    last_checked: float = float("-inf")  # sentinel: never probed
     last_error: str | None = None
     probe_count: int = 0
     fail_count: int = 0
