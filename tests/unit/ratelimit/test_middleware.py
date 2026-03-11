@@ -14,7 +14,6 @@ from api2mcp.ratelimit.config import BucketConfig, RateLimitConfig
 from api2mcp.ratelimit.exceptions import RateLimitError
 from api2mcp.ratelimit.middleware import RateLimitMiddleware, _wrap_error_as_response
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
