@@ -58,6 +58,10 @@ jobs:
     name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
+    if: |
+      !contains(github.ref_name, 'a') &&
+      !contains(github.ref_name, 'b') &&
+      !contains(github.ref_name, 'rc')
     environment:
       name: pypi
       url: https://pypi.org/p/api2mcp
@@ -71,10 +75,35 @@ jobs:
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-  # ── 4. Create GitHub Release with CHANGELOG notes ────────────────────────
+  # ── 4. Publish to TestPyPI for pre-release tags ───────────────────────────
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: build
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.ref_name, 'a') ||
+      contains(github.ref_name, 'b') ||
+      contains(github.ref_name, 'rc')
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/api2mcp
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  # ── 5. Create GitHub Release with CHANGELOG notes ────────────────────────
   github-release:
     name: Create GitHub Release
-    needs: publish-pypi
+    needs: [publish-pypi, publish-testpypi]
+    if: always() && !failure() && !cancelled()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
