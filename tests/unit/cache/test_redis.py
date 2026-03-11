@@ -19,7 +19,6 @@ import pytest
 from api2mcp.cache.base import CachedResponse
 from api2mcp.cache.redis import RedisCacheBackend
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
