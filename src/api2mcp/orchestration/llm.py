@@ -266,7 +266,7 @@ class LLMFactory:
                 hint="Run: pip install langchain-anthropic  (or: pip install 'api2mcp[anthropic]')",
             ) from exc
         return ChatAnthropic(  # type: ignore[return-value]
-            model=model, temperature=temperature, api_key=api_key
+            model_name=model, temperature=temperature, api_key=api_key
         )
 
     @staticmethod
