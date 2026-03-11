@@ -29,10 +29,14 @@ def _make_response(data: str = "hello", status_code: int = 200) -> CachedRespons
     return CachedResponse(data=data, status_code=status_code)
 
 
-def _make_async_client() -> AsyncMock:
-    """Return an AsyncMock that stands in for a ``redis.asyncio.Redis`` instance."""
-    client = AsyncMock()
-    # Ensure all relevant methods are async
+def _make_async_client() -> MagicMock:
+    """Return a MagicMock standing in for a ``redis.asyncio.Redis`` instance.
+
+    The client object itself is never awaited — only its individual methods are,
+    so MagicMock is the right root type.  Each async method is explicitly set to
+    AsyncMock so ``await client.get(...)`` etc. work correctly.
+    """
+    client = MagicMock()
     client.get = AsyncMock()
     client.set = AsyncMock()
     client.delete = AsyncMock()
@@ -45,7 +49,7 @@ def _make_async_client() -> AsyncMock:
 def _backend_with_client(
     key_prefix: str = "api2mcp:",
     **kwargs: Any,
-) -> tuple[RedisCacheBackend, AsyncMock]:
+) -> tuple[RedisCacheBackend, MagicMock]:
     """Create a RedisCacheBackend with a pre-injected fake async client.
 
     Returns ``(backend, fake_client)`` so tests can assert on the client.
