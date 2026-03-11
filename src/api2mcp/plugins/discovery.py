@@ -168,11 +168,11 @@ class PluginLoader:
         return plugins
 
     @staticmethod
-    def _is_valid_plugin_class(cls: Any) -> bool:
-        """Return ``True`` if *cls* is a concrete :class:`BasePlugin` subclass."""
+    def _is_valid_plugin_class(plugin_cls: Any) -> bool:
+        """Return ``True`` if *plugin_cls* is a concrete :class:`BasePlugin` subclass."""
         return (
-            inspect.isclass(cls)
-            and issubclass(cls, BasePlugin)
-            and cls is not BasePlugin
-            and bool(getattr(cls, "id", ""))
+            inspect.isclass(plugin_cls)
+            and issubclass(plugin_cls, BasePlugin)
+            and plugin_cls is not BasePlugin
+            and bool(getattr(plugin_cls, "id", ""))
         )
