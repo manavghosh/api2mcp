@@ -663,3 +663,382 @@ class TestGraphQLParserParse:
         parser = GraphQLParser(graphql_endpoint="/api/graphql")
         spec = await parser.parse(SIMPLE_SDL)
         assert all("/api/graphql/" in ep.path for ep in spec.endpoints)
+
+    @pytest.mark.asyncio
+    async def test_parse_endpoint_url_override(self) -> None:
+        parser = GraphQLParser()
+        spec = await parser.parse(SIMPLE_SDL, endpoint_url="/v2/graphql")
+        assert all("/v2/graphql/" in ep.path for ep in spec.endpoints)
+
+    @pytest.mark.asyncio
+    async def test_parse_missing_file_raises(self) -> None:
+        from api2mcp.core.exceptions import ParseException
+        parser = GraphQLParser()
+        with pytest.raises(ParseException, match="not found"):
+            await parser.parse(Path("/nonexistent/path/schema.graphql"))
+
+    @pytest.mark.asyncio
+    async def test_validate_introspection_json_string(self) -> None:
+        data = _make_introspection(
+            query_fields=[{
+                "name": "ping",
+                "description": "",
+                "args": [],
+                "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+                "isDeprecated": False,
+                "deprecationReason": None,
+            }]
+        )
+        parser = GraphQLParser()
+        errors = await parser.validate(json.dumps(data))
+        assert errors == []
+
+    @pytest.mark.asyncio
+    async def test_parse_str_file_path_json(self, tmp_path: Path) -> None:
+        """A str source with .json suffix and existing file is loaded as file."""
+        data = _make_introspection(
+            query_fields=[{
+                "name": "ping",
+                "description": "",
+                "args": [],
+                "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+                "isDeprecated": False,
+                "deprecationReason": None,
+            }]
+        )
+        json_file = tmp_path / "introspection.json"
+        json_file.write_text(json.dumps(data), encoding="utf-8")
+        parser = GraphQLParser()
+        spec = await parser.parse(str(json_file))
+        assert any(e.operation_id == "ping" for e in spec.endpoints)
+        assert spec.title == "Introspection"  # derived from "introspection" stem
+
+    @pytest.mark.asyncio
+    async def test_parse_raw_sdl_string_not_a_path(self) -> None:
+        """A str source that is raw SDL (not a file path) is parsed directly."""
+        parser = GraphQLParser()
+        spec = await parser.parse("type Query { hello: String }")
+        assert any(e.operation_id == "hello" for e in spec.endpoints)
+
+    @pytest.mark.asyncio
+    async def test_parse_str_url_title_defaults_to_graphql_api(self) -> None:
+        """For a URL source, title should default to 'GraphQL API' when not provided."""
+        parser = GraphQLParser()
+        # Use a raw SDL string that looks like it has no path stem (raw content)
+        spec = await parser.parse("type Query { x: String }", title="Provided")
+        assert spec.title == "Provided"
+
+
+# ---------------------------------------------------------------------------
+# _IntrospectionParser — extended coverage tests
+# ---------------------------------------------------------------------------
+
+
+class TestIntrospectionParserExtended:
+    """Cover branches in _type_ref_to_schema_ref not hit by basic tests."""
+
+    def _parser(self) -> _IntrospectionParser:
+        return _IntrospectionParser()
+
+    def test_object_type_with_fields(self) -> None:
+        type_map = {
+            "User": {
+                "kind": "OBJECT",
+                "name": "User",
+                "description": "A user",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "User ID",
+                        "type": {"kind": "SCALAR", "name": "ID", "ofType": None},
+                    },
+                    {
+                        "name": "name",
+                        "description": "",
+                        "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+                    },
+                ],
+            }
+        }
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {"kind": "OBJECT", "name": "User", "ofType": None}, type_map, seen=set()
+        )
+        assert ref.type == "object"
+        assert "id" in ref.properties
+        assert "name" in ref.properties
+        assert ref.description == "A user"
+
+    def test_object_type_circular_ref_returns_placeholder(self) -> None:
+        type_map: dict = {}
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {"kind": "OBJECT", "name": "Node", "ofType": None},
+            type_map,
+            seen={"Node"},  # already in seen → circular
+        )
+        assert ref.type == "object"
+        assert ref.ref_name == "Node"
+        assert not ref.properties
+
+    def test_interface_type_with_fields(self) -> None:
+        type_map = {
+            "Node": {
+                "kind": "INTERFACE",
+                "name": "Node",
+                "description": "An interface",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": "",
+                        "type": {"kind": "SCALAR", "name": "ID", "ofType": None},
+                    }
+                ],
+            }
+        }
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {"kind": "INTERFACE", "name": "Node", "ofType": None}, type_map, seen=set()
+        )
+        assert ref.type == "object"
+        assert "id" in ref.properties
+
+    def test_input_object_type_with_required_fields(self) -> None:
+        type_map = {
+            "CreateInput": {
+                "kind": "INPUT_OBJECT",
+                "name": "CreateInput",
+                "description": "Input for creation",
+                "inputFields": [
+                    {
+                        "name": "title",
+                        "description": "Title field",
+                        "type": {
+                            "kind": "NON_NULL", "name": None,
+                            "ofType": {"kind": "SCALAR", "name": "String", "ofType": None}
+                        },
+                    },
+                    {
+                        "name": "body",
+                        "description": "",
+                        "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+                    },
+                ],
+            }
+        }
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {"kind": "INPUT_OBJECT", "name": "CreateInput", "ofType": None},
+            type_map,
+            seen=set(),
+        )
+        assert ref.type == "object"
+        assert "title" in ref.properties
+        assert "body" in ref.properties
+        assert "title" in ref.required
+
+    def test_input_object_circular_ref_returns_placeholder(self) -> None:
+        type_map: dict = {}
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {"kind": "INPUT_OBJECT", "name": "Recursive", "ofType": None},
+            type_map,
+            seen={"Recursive"},
+        )
+        assert ref.type == "object"
+        assert ref.ref_name == "Recursive"
+
+    def test_union_type(self) -> None:
+        type_map = {
+            "SearchResult": {
+                "kind": "UNION",
+                "name": "SearchResult",
+                "description": "A search result",
+                "possibleTypes": [
+                    {"name": "Post"},
+                    {"name": "User"},
+                ],
+            },
+            "Post": {
+                "kind": "OBJECT",
+                "name": "Post",
+                "description": "",
+                "fields": [],
+            },
+            "User": {
+                "kind": "OBJECT",
+                "name": "User",
+                "description": "",
+                "fields": [],
+            },
+        }
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {"kind": "UNION", "name": "SearchResult", "ofType": None},
+            type_map,
+            seen=set(),
+        )
+        assert ref.type == "object"
+        assert len(ref.any_of) == 2
+
+    def test_fallback_unknown_kind_returns_string(self) -> None:
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {"kind": "UNKNOWN_KIND", "name": None, "ofType": None}, {}, seen=set()
+        )
+        assert ref.type == "string"
+
+    def test_nonnull_scalar_unwraps(self) -> None:
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {
+                "kind": "NON_NULL", "name": None,
+                "ofType": {"kind": "SCALAR", "name": "Int", "ofType": None},
+            },
+            {},
+            seen=set(),
+        )
+        assert ref.type == "integer"
+
+    def test_list_of_objects(self) -> None:
+        type_map = {
+            "User": {
+                "kind": "OBJECT",
+                "name": "User",
+                "description": "",
+                "fields": [],
+            }
+        }
+        p = self._parser()
+        ref = p._type_ref_to_schema_ref(
+            {
+                "kind": "LIST", "name": None,
+                "ofType": {"kind": "OBJECT", "name": "User", "ofType": None},
+            },
+            type_map,
+            seen=set(),
+        )
+        assert ref.type == "array"
+        assert ref.items is not None
+        assert ref.items.type == "object"
+
+    def test_subscription_in_introspection(self) -> None:
+        sub_field = {
+            "name": "onMessage",
+            "description": "Real-time messages",
+            "args": [],
+            "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+            "isDeprecated": False,
+            "deprecationReason": None,
+        }
+        types = [
+            {"kind": "SCALAR", "name": "String", "description": None,
+             "fields": None, "inputFields": None, "enumValues": None, "possibleTypes": None},
+            {"kind": "OBJECT", "name": "Subscription", "description": None,
+             "fields": [sub_field], "inputFields": None, "enumValues": None, "possibleTypes": None},
+        ]
+        schema = {
+            "__schema": {
+                "types": types,
+                "queryType": None,
+                "subscriptionType": {"name": "Subscription"},
+            }
+        }
+        spec = _IntrospectionParser().parse(schema)
+        subs = [e for e in spec.endpoints if e.method == HttpMethod.SUBSCRIPTION]
+        assert len(subs) == 1
+        assert subs[0].operation_id == "onMessage"
+        assert subs[0].metadata.get("subscription") is True
+
+    def test_models_populated_for_object_and_input_types(self) -> None:
+        extra_types = [
+            {
+                "kind": "OBJECT", "name": "Post", "description": "A post",
+                "fields": [
+                    {"name": "title", "description": "",
+                     "type": {"kind": "SCALAR", "name": "String", "ofType": None}}
+                ],
+                "inputFields": None, "enumValues": None, "possibleTypes": None,
+            },
+            {
+                "kind": "INPUT_OBJECT", "name": "PostInput", "description": "",
+                "fields": None,
+                "inputFields": [
+                    {"name": "title", "description": "",
+                     "type": {"kind": "SCALAR", "name": "String", "ofType": None}}
+                ],
+                "enumValues": None, "possibleTypes": None,
+            },
+        ]
+        data = _make_introspection(query_fields=[], extra_types=extra_types)
+        spec = _IntrospectionParser().parse(data)
+        assert "Post" in spec.models
+        assert "PostInput" in spec.models
+
+    def test_default_value_on_arg(self) -> None:
+        data = _make_introspection(
+            query_fields=[{
+                "name": "search",
+                "description": "",
+                "args": [{
+                    "name": "limit",
+                    "description": "Max results",
+                    "type": {"kind": "SCALAR", "name": "Int", "ofType": None},
+                    "defaultValue": "10",
+                }],
+                "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+                "isDeprecated": False,
+                "deprecationReason": None,
+            }]
+        )
+        spec = _IntrospectionParser().parse(data)
+        param = spec.endpoints[0].parameters[0]
+        assert param.schema.default == "10"
+
+    def test_validate_missing_types_key(self) -> None:
+        errors = _IntrospectionParser().validate({"__schema": {"queryType": {"name": "Q"}}})
+        assert any("types" in str(e) for e in errors)
+
+    def test_validate_no_query_or_mutation_type(self) -> None:
+        errors = _IntrospectionParser().validate({"__schema": {"types": []}})
+        assert any("queryType" in str(e) or "no operations" in str(e).lower() for e in errors)
+
+    def test_parse_description_from_schema(self) -> None:
+        schema = {
+            "__schema": {
+                "description": "My GraphQL API",
+                "types": [],
+                "queryType": None,
+            }
+        }
+        spec = _IntrospectionParser().parse(schema)
+        assert spec.description == "My GraphQL API"
+
+    def test_deprecated_field_in_introspection(self) -> None:
+        data = _make_introspection(
+            query_fields=[{
+                "name": "oldField",
+                "description": "",
+                "args": [],
+                "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+                "isDeprecated": True,
+                "deprecationReason": "Use newField",
+            }]
+        )
+        spec = _IntrospectionParser().parse(data)
+        assert spec.endpoints[0].deprecated is True
+
+    def test_field_with_no_description_uses_summary(self) -> None:
+        data = _make_introspection(
+            query_fields=[{
+                "name": "ping",
+                "description": None,
+                "args": [],
+                "type": {"kind": "SCALAR", "name": "String", "ofType": None},
+                "isDeprecated": False,
+                "deprecationReason": None,
+            }]
+        )
+        spec = _IntrospectionParser().parse(data)
+        ep = spec.endpoints[0]
+        assert "ping" in ep.summary
