@@ -13,7 +13,7 @@ api2mcp-langgraph-setup/
 api2mcp-langgraph-setup.zip
 setup-spec-kit.sh
 install-spec-kit-plugin.sh
-schemas/feature-spec.schema.json
+
 
 # -----------------------------------------------------------------------------
 # 2. Claude / AI Tooling (local only — CLAUDE.md at root is kept)
