@@ -66,29 +66,29 @@ def test_required_file_not_empty(path: Path) -> None:
 
 def test_mkdocs_yml_is_valid_yaml() -> None:
     content = _MKDOCS_YML.read_text(encoding="utf-8")
-    config = yaml.safe_load(content)
+    config = yaml.full_load(content)
     assert isinstance(config, dict)
 
 
 def test_mkdocs_yml_has_site_name() -> None:
-    config = yaml.safe_load(_MKDOCS_YML.read_text(encoding="utf-8"))
+    config = yaml.full_load(_MKDOCS_YML.read_text(encoding="utf-8"))
     assert "site_name" in config
     assert config["site_name"]
 
 
 def test_mkdocs_yml_uses_material_theme() -> None:
-    config = yaml.safe_load(_MKDOCS_YML.read_text(encoding="utf-8"))
+    config = yaml.full_load(_MKDOCS_YML.read_text(encoding="utf-8"))
     assert config.get("theme", {}).get("name") == "material"
 
 
 def test_mkdocs_yml_has_nav() -> None:
-    config = yaml.safe_load(_MKDOCS_YML.read_text(encoding="utf-8"))
+    config = yaml.full_load(_MKDOCS_YML.read_text(encoding="utf-8"))
     assert "nav" in config
     assert len(config["nav"]) > 0
 
 
 def test_mkdocs_yml_has_plugins() -> None:
-    config = yaml.safe_load(_MKDOCS_YML.read_text(encoding="utf-8"))
+    config = yaml.full_load(_MKDOCS_YML.read_text(encoding="utf-8"))
     plugins = config.get("plugins", [])
     plugin_names = []
     for p in plugins:
@@ -102,7 +102,7 @@ def test_mkdocs_yml_has_plugins() -> None:
 
 def test_mkdocs_yml_nav_files_exist() -> None:
     """Every .md file referenced in nav must exist on disk."""
-    config = yaml.safe_load(_MKDOCS_YML.read_text(encoding="utf-8"))
+    config = yaml.full_load(_MKDOCS_YML.read_text(encoding="utf-8"))
 
     def _collect_md_paths(nav_item) -> list[str]:
         paths: list[str] = []
@@ -295,20 +295,20 @@ def test_no_broken_internal_links() -> None:
 
 def test_ci_docs_workflow_is_valid_yaml() -> None:
     path = _ROOT / ".github" / "workflows" / "docs.yml"
-    config = yaml.safe_load(path.read_text(encoding="utf-8"))
+    config = yaml.full_load(path.read_text(encoding="utf-8"))
     assert isinstance(config, dict)
 
 
 def test_ci_docs_workflow_has_build_job() -> None:
     path = _ROOT / ".github" / "workflows" / "docs.yml"
-    config = yaml.safe_load(path.read_text(encoding="utf-8"))
+    config = yaml.full_load(path.read_text(encoding="utf-8"))
     jobs = config.get("jobs", {})
     assert "build" in jobs
 
 
 def test_ci_docs_workflow_has_deploy_job() -> None:
     path = _ROOT / ".github" / "workflows" / "docs.yml"
-    config = yaml.safe_load(path.read_text(encoding="utf-8"))
+    config = yaml.full_load(path.read_text(encoding="utf-8"))
     jobs = config.get("jobs", {})
     assert "deploy" in jobs
 
