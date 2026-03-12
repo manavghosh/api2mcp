@@ -10,6 +10,34 @@
 
 Convert any REST/GraphQL API into a fully functional MCP (Model Context Protocol) server, and orchestrate intelligent multi-API workflows using LangGraph.
 
+API2MCP v0.1.0 is a complete framework, not a preview. Here's what's available today:
+
+Core Pipeline
+- OpenAPI 3.0/3.1, Swagger 2.0, GraphQL SDL, and Postman Collection parsers
+- MCP Tool Generator with full JSON Schema type mapping
+- Streamable HTTP and stdio transports (MCP spec 2025-03-26 compliant)
+
+Security & Infrastructure
+- Authentication: API key, Bearer, Basic, OAuth 2.0 (client credentials + PKCE)
+- Secret management: environment variables, OS keychain, HashiCorp Vault, AWS Secrets Manager, encrypted file store
+- Input validation: SQL injection and command injection protection
+- Rate limiting (token bucket, per-tool configurable), circuit breaker, connection pooling, response caching (memory and Redis)
+
+LangGraph Orchestration
+- ReactiveGraph, PlannerGraph, ConversationalGraph
+- MCP Tool Adapter (MCP → LangChain StructuredTool) with colon namespacing
+- Checkpointing: MemorySaver, SqliteSaver, PostgresSaver
+- End-to-end streaming via LangGraph astream_events v2
+- Multi-model support: Anthropic, OpenAI, Google Gemini
+
+Developer Experience
+- Interactive setup wizard (`api2mcp wizard`)
+- Hot reload dev server (`api2mcp dev`)
+- In-process testing framework (MCPTestClient, CoverageReporter)
+- VS Code integration (launch configs, tasks, schema validation)
+- Plugin system with lifecycle hooks, template registry, CLI export and diff commands
+
+
 ## Features
 
 - 🔄 **Automatic Conversion**: OpenAPI, GraphQL, Postman → MCP Server
