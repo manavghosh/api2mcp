@@ -84,7 +84,7 @@ class TestMultiServerRegistration:
         await registry.register_server("github", _make_session(["list_issues"]))
         await registry.register_server("jira", _make_session(["create_ticket"]))
 
-        registry.unregister_server("github")
+        await registry.unregister_server("github")
 
         assert "github:list_issues" not in registry
         assert "jira:create_ticket" in registry
@@ -237,7 +237,7 @@ class TestUsageStatsIntegration:
     async def test_stats_empty_after_unregister(self) -> None:
         registry = MCPToolRegistry()
         await registry.register_server("svc", _make_session(["tool_x"]))
-        registry.unregister_server("svc")
+        await registry.unregister_server("svc")
         assert registry.get_usage_stats() == {}
 
 

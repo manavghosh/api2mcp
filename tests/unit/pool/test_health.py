@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 import httpx
-import pytest
 import respx
 
 from api2mcp.pool.config import HealthCheckConfig
 from api2mcp.pool.health import HostHealth, PoolHealthChecker
 
 
-@pytest.mark.asyncio
 class TestPoolHealthChecker:
     def _make_checker(self, **kwargs) -> PoolHealthChecker:
         return PoolHealthChecker(

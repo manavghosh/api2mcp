@@ -170,7 +170,6 @@ class TestConnectionPoolManagerRequest:
         assert pool.registered_hosts() == []
 
 
-@pytest.mark.asyncio
 class TestConnectionPoolManagerHealth:
     def test_health_status_empty(self) -> None:
         pool = ConnectionPoolManager()

@@ -235,6 +235,6 @@ class TestRegistryEndToEnd:
         await registry.register_server("github", session)
         assert "github:list_issues" in registry
 
-        registry.unregister_server("github")
+        await registry.unregister_server("github")
         assert "github:list_issues" not in registry
         assert len(registry) == 0

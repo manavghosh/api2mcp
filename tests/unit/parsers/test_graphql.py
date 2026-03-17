@@ -518,8 +518,17 @@ class TestIntrospectionParser:
 @pytestmark_gql
 class TestScalarMapping:
     def _get_scalar_schema(self, scalar_name: str):
+        from graphql import GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString
         from graphql.type import GraphQLScalarType
-        scalar = GraphQLScalarType(name=scalar_name)
+
+        _builtins = {
+            "String": GraphQLString,
+            "ID": GraphQLID,
+            "Int": GraphQLInt,
+            "Float": GraphQLFloat,
+            "Boolean": GraphQLBoolean,
+        }
+        scalar = _builtins.get(scalar_name) or GraphQLScalarType(name=scalar_name)
         return _type_to_schema_ref(scalar)
 
     def test_string_scalar(self) -> None:
