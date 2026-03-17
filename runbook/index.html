@@ -319,6 +319,26 @@
   
   
   
+    
+    
+      <li class="md-tabs__item">
+        <a href="../threat-model/" class="md-tabs__link">
+          
+  
+  
+  Security
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
     <li class="md-tabs__item">
       <a href="../contributing/" class="md-tabs__link">
         
@@ -881,6 +901,95 @@
     
   
     Multi-API Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../threat-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Threat Model
   
 
     
@@ -1839,36 +1948,36 @@ configuration and commands, and working code samples.</p>
 <p><strong>Contents</strong></p>
 <ol>
 <li><a href="#1-basic-api-conversion">Basic API Conversion</a></li>
-<li>1.1 <a href="#11-openapi-3x--mcp-server">OpenAPI 3.x → MCP Server</a></li>
-<li>1.2 <a href="#12-graphql-schema--mcp-server">GraphQL Schema → MCP Server</a></li>
-<li>1.3 <a href="#13-swagger-20-legacy-api--mcp-server">Swagger 2.0 Legacy API → MCP Server</a></li>
-<li>1.4 <a href="#14-postman-collection--mcp-server">Postman Collection → MCP Server</a></li>
+<li>1.1 <a href="#11-openapi-3x-mcp-server">OpenAPI 3.x → MCP Server</a></li>
+<li>1.2 <a href="#12-graphql-schema-mcp-server">GraphQL Schema → MCP Server</a></li>
+<li>1.3 <a href="#13-swagger-20-legacy-api-mcp-server">Swagger 2.0 Legacy API → MCP Server</a></li>
+<li>1.4 <a href="#14-postman-collection-mcp-server">Postman Collection → MCP Server</a></li>
 <li>1.5 <a href="#15-auto-detect-api-format">Auto-Detect API Format</a></li>
-<li><a href="#before-you-generate--downloading-a-protected-spec">Before You Generate — Downloading a Protected Spec</a></li>
-<li><a href="#scenario-a--public-spec-url-no-auth-required">Scenario A — Public spec URL</a></li>
-<li><a href="#scenario-b--spec-behind-a-bearer-token-or-api-key">Scenario B — Bearer token or API key</a></li>
-<li><a href="#scenario-c--spec-behind-oauth-20-client-credentials">Scenario C — OAuth 2.0 Client Credentials</a></li>
-<li><a href="#scenario-d--spec-behind-oauth-20-authorization-code-user-login">Scenario D — OAuth 2.0 Authorization Code</a></li>
-<li><a href="#scenario-e--spec-behind-http-basic-auth">Scenario E — HTTP Basic Auth</a></li>
-<li><a href="#scenario-f--internal--vpn-only-spec">Scenario F — Internal / VPN-only spec</a></li>
+<li><a href="#before-you-generate-downloading-a-protected-spec">Before You Generate — Downloading a Protected Spec</a></li>
+<li><a href="#scenario-a-public-spec-url-no-auth-required">Scenario A — Public spec URL</a></li>
+<li><a href="#scenario-b-spec-behind-a-bearer-token-or-api-key">Scenario B — Bearer token or API key</a></li>
+<li><a href="#scenario-c-spec-behind-oauth-20-client-credentials">Scenario C — OAuth 2.0 Client Credentials</a></li>
+<li><a href="#scenario-d-spec-behind-oauth-20-authorization-code-user-login">Scenario D — OAuth 2.0 Authorization Code</a></li>
+<li><a href="#scenario-e-spec-behind-http-basic-auth">Scenario E — HTTP Basic Auth</a></li>
+<li><a href="#scenario-f-internal-vpn-only-spec">Scenario F — Internal / VPN-only spec</a></li>
 <li><a href="#2-authentication-patterns">Authentication Patterns</a></li>
-<li>2.1 <a href="#21-api-key-header--query--cookie">API Key (Header / Query / Cookie)</a></li>
+<li>2.1 <a href="#21-api-key-header-query-cookie">API Key (Header / Query / Cookie)</a></li>
 <li>2.2 <a href="#22-bearer-token">Bearer Token</a></li>
 <li>2.3 <a href="#23-http-basic-auth">HTTP Basic Auth</a></li>
-<li>2.4 <a href="#24-oauth-20--client-credentials">OAuth 2.0 — Client Credentials</a></li>
-<li>2.5 <a href="#25-oauth-20--authorization-code">OAuth 2.0 — Authorization Code</a></li>
+<li>2.4 <a href="#24-oauth-20-client-credentials">OAuth 2.0 — Client Credentials</a></li>
+<li>2.5 <a href="#25-oauth-20-authorization-code">OAuth 2.0 — Authorization Code</a></li>
 <li><a href="#3-secret-management-backends">Secret Management Backends</a></li>
 <li>3.1 <a href="#31-environment-variables-default">Environment Variables (Default)</a></li>
 <li>3.2 <a href="#32-aws-secrets-manager">AWS Secrets Manager</a></li>
 <li>3.3 <a href="#33-hashicorp-vault">HashiCorp Vault</a></li>
 <li>3.4 <a href="#34-os-keychain">OS Keychain</a></li>
 <li>3.5 <a href="#35-encrypted-file">Encrypted File</a></li>
-<li><a href="#4-reliability--performance">Reliability &amp; Performance</a></li>
+<li><a href="#4-reliability-performance">Reliability &amp; Performance</a></li>
 <li>4.1 <a href="#41-rate-limiting">Rate Limiting</a></li>
 <li>4.2 <a href="#42-response-caching">Response Caching</a></li>
 <li>4.3 <a href="#43-circuit-breaker">Circuit Breaker</a></li>
 <li>4.4 <a href="#44-connection-pooling">Connection Pooling</a></li>
-<li>4.5 <a href="#45-input-validation--sanitization">Input Validation &amp; Sanitization</a></li>
+<li>4.5 <a href="#45-input-validation-sanitization">Input Validation &amp; Sanitization</a></li>
 <li><a href="#5-development-workflow">Development Workflow</a></li>
 <li>5.1 <a href="#51-hot-reload-dev-server">Hot Reload Dev Server</a></li>
 <li>5.2 <a href="#52-interactive-wizard-setup">Interactive Wizard Setup</a></li>
@@ -1881,31 +1990,31 @@ configuration and commands, and working code samples.</p>
 <li>6.2 <a href="#62-network-server-http-transport">Network Server (HTTP Transport)</a></li>
 <li>6.3 <a href="#63-docker-container-deployment">Docker Container Deployment</a></li>
 <li>6.4 <a href="#64-cicd-pipeline-integration">CI/CD Pipeline Integration</a></li>
-<li>6.5 <a href="#65-multi-environment-config-dev--staging--prod">Multi-Environment Config (dev / staging / prod)</a></li>
+<li>6.5 <a href="#65-multi-environment-config-dev-staging-prod">Multi-Environment Config (dev / staging / prod)</a></li>
 <li><a href="#7-langgraph-orchestration">LangGraph Orchestration</a></li>
-<li>7.1 <a href="#71-reactive-agent--single-api">Reactive Agent — Single API</a></li>
-<li>7.2 <a href="#72-planner-graph--sequential-workflow">Planner Graph — Sequential Workflow</a></li>
-<li>7.3 <a href="#73-planner-graph--parallel-execution">Planner Graph — Parallel Execution</a></li>
+<li>7.1 <a href="#71-reactive-agent-single-api">Reactive Agent — Single API</a></li>
+<li>7.2 <a href="#72-planner-graph-sequential-workflow">Planner Graph — Sequential Workflow</a></li>
+<li>7.3 <a href="#73-planner-graph-parallel-execution">Planner Graph — Parallel Execution</a></li>
 <li>7.4 <a href="#74-multi-api-orchestration">Multi-API Orchestration</a></li>
 <li>7.5 <a href="#75-conversational-agent-with-memory">Conversational Agent with Memory</a></li>
 <li>7.6 <a href="#76-human-in-the-loop-approval">Human-in-the-Loop Approval</a></li>
 <li>7.7 <a href="#77-streaming-real-time-output">Streaming Real-Time Output</a></li>
-<li>7.8 <a href="#78-checkpointed--resumable-workflows">Checkpointed &amp; Resumable Workflows</a></li>
+<li>7.8 <a href="#78-checkpointed-resumable-workflows">Checkpointed &amp; Resumable Workflows</a></li>
 <li><a href="#8-real-world-integration-scenarios">Real-World Integration Scenarios</a></li>
 <li>8.1 <a href="#81-github-devops-automation">GitHub DevOps Automation</a></li>
 <li>8.2 <a href="#82-stripe-payment-processing">Stripe Payment Processing</a></li>
-<li>8.3 <a href="#83-github--stripe-billing-reconciliation">GitHub + Stripe Billing Reconciliation</a></li>
-<li>8.4 <a href="#84-github--slack-notifications">GitHub + Slack Notifications</a></li>
+<li>8.3 <a href="#83-github-stripe-billing-reconciliation">GitHub + Stripe Billing Reconciliation</a></li>
+<li>8.4 <a href="#84-github-slack-notifications">GitHub + Slack Notifications</a></li>
 <li>8.5 <a href="#85-internal-enterprise-api-gateway">Internal Enterprise API Gateway</a></li>
 <li>8.6 <a href="#86-aws-cloud-infrastructure-management">AWS Cloud Infrastructure Management</a></li>
-<li>8.7 <a href="#87-crm-automation-salesforce--email">CRM Automation (Salesforce + Email)</a></li>
+<li>8.7 <a href="#87-crm-automation-salesforce-email">CRM Automation (Salesforce + Email)</a></li>
 <li>8.8 <a href="#88-database-api-proxy">Database API Proxy</a></li>
 <li><a href="#9-extending-api2mcp">Extending API2MCP</a></li>
 <li>9.1 <a href="#91-install-a-community-template">Install a Community Template</a></li>
 <li>9.2 <a href="#92-build-and-publish-a-template">Build and Publish a Template</a></li>
 <li>9.3 <a href="#93-write-a-custom-plugin">Write a Custom Plugin</a></li>
 <li>9.4 <a href="#94-write-a-custom-parser">Write a Custom Parser</a></li>
-<li><a href="#10-observability--troubleshooting">Observability &amp; Troubleshooting</a><ul>
+<li><a href="#10-observability-troubleshooting">Observability &amp; Troubleshooting</a><ul>
 <li>10.1 <a href="#101-structured-logging">Structured Logging</a></li>
 <li>10.2 <a href="#102-workflow-streaming-observability">Workflow Streaming Observability</a></li>
 <li>10.3 <a href="#103-common-errors-and-fixes">Common Errors and Fixes</a></li>
