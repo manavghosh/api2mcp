@@ -106,45 +106,45 @@ class TestRefResolver:
         }
         self.resolver = RefResolver(self.doc)
 
-    def test_resolve_local_ref(self) -> None:
-        result = self.resolver.resolve("#/components/schemas/Pet")
+    async def test_resolve_local_ref(self) -> None:
+        result = await self.resolver.resolve("#/components/schemas/Pet")
         assert result["type"] == "object"
         assert "name" in result["properties"]
 
-    def test_resolve_chained_ref(self) -> None:
-        result = self.resolver.resolve("#/components/schemas/Error")
+    async def test_resolve_chained_ref(self) -> None:
+        result = await self.resolver.resolve("#/components/schemas/Error")
         assert result["type"] == "object"
         assert "message" in result["properties"]
 
-    def test_resolve_nonexistent_ref(self) -> None:
+    async def test_resolve_nonexistent_ref(self) -> None:
         with pytest.raises(RefResolutionError, match="not found"):
-            self.resolver.resolve("#/components/schemas/NonExistent")
+            await self.resolver.resolve("#/components/schemas/NonExistent")
 
-    def test_circular_ref_detection(self) -> None:
+    async def test_circular_ref_detection(self) -> None:
         self.doc["components"]["schemas"]["A"] = {"$ref": "#/components/schemas/B"}
         self.doc["components"]["schemas"]["B"] = {"$ref": "#/components/schemas/A"}
         resolver = RefResolver(self.doc)
         with pytest.raises(CircularRefError, match="Circular"):
-            resolver.resolve("#/components/schemas/A")
+            await resolver.resolve("#/components/schemas/A")
 
-    def test_resolve_all_refs(self) -> None:
+    async def test_resolve_all_refs(self) -> None:
         obj = {
             "pet": {"$ref": "#/components/schemas/Pet"},
             "list": [{"$ref": "#/components/schemas/SimpleError"}],
         }
-        result = self.resolver.resolve_all_refs(obj)
+        result = await self.resolver.resolve_all_refs(obj)
         assert result["pet"]["type"] == "object"
         assert result["list"][0]["type"] == "object"
 
-    def test_resolve_all_refs_circular_safe(self) -> None:
+    async def test_resolve_all_refs_circular_safe(self) -> None:
         self.doc["components"]["schemas"]["Loop"] = {"$ref": "#/components/schemas/Loop"}
         resolver = RefResolver(self.doc)
-        result = resolver.resolve_all_refs({"x": {"$ref": "#/components/schemas/Loop"}})
+        result = await resolver.resolve_all_refs({"x": {"$ref": "#/components/schemas/Loop"}})
         assert "_circular_ref" in result["x"]
 
-    def test_pointer_with_escaped_chars(self) -> None:
+    async def test_pointer_with_escaped_chars(self) -> None:
         self.doc["paths"] = {"/users/{id}": {"get": {"summary": "Get user"}}}
-        result = self.resolver.resolve("#/paths/~1users~1{id}/get")
+        result = await self.resolver.resolve("#/paths/~1users~1{id}/get")
         assert result["summary"] == "Get user"
 
 
@@ -157,13 +157,13 @@ class TestSchemaToIr:
     def setup_method(self) -> None:
         self.resolver = RefResolver({})
 
-    def test_string_type(self) -> None:
-        ir = _schema_to_ir({"type": "string", "description": "A name"}, self.resolver)
+    async def test_string_type(self) -> None:
+        ir = await _schema_to_ir({"type": "string", "description": "A name"}, self.resolver)
         assert ir.type == "string"
         assert ir.description == "A name"
 
-    def test_integer_with_constraints(self) -> None:
-        ir = _schema_to_ir(
+    async def test_integer_with_constraints(self) -> None:
+        ir = await _schema_to_ir(
             {"type": "integer", "minimum": 0, "maximum": 100, "format": "int32"},
             self.resolver,
         )
@@ -171,8 +171,8 @@ class TestSchemaToIr:
         assert ir.minimum == 0
         assert ir.maximum == 100
 
-    def test_object_with_properties(self) -> None:
-        ir = _schema_to_ir(
+    async def test_object_with_properties(self) -> None:
+        ir = await _schema_to_ir(
             {
                 "type": "object",
                 "properties": {
@@ -187,8 +187,8 @@ class TestSchemaToIr:
         assert "name" in ir.properties
         assert ir.required == ["name"]
 
-    def test_array_with_items(self) -> None:
-        ir = _schema_to_ir(
+    async def test_array_with_items(self) -> None:
+        ir = await _schema_to_ir(
             {"type": "array", "items": {"type": "string"}},
             self.resolver,
         )
@@ -196,27 +196,27 @@ class TestSchemaToIr:
         assert ir.items is not None
         assert ir.items.type == "string"
 
-    def test_nullable_openapi_30(self) -> None:
-        ir = _schema_to_ir({"type": "string", "nullable": True}, self.resolver)
+    async def test_nullable_openapi_30(self) -> None:
+        ir = await _schema_to_ir({"type": "string", "nullable": True}, self.resolver)
         assert ir.nullable is True
 
-    def test_nullable_openapi_31(self) -> None:
-        ir = _schema_to_ir({"type": ["string", "null"]}, self.resolver)
+    async def test_nullable_openapi_31(self) -> None:
+        ir = await _schema_to_ir({"type": ["string", "null"]}, self.resolver)
         assert ir.nullable is True
         assert ir.type == "string"
 
-    def test_enum(self) -> None:
-        ir = _schema_to_ir({"type": "string", "enum": ["a", "b"]}, self.resolver)
+    async def test_enum(self) -> None:
+        ir = await _schema_to_ir({"type": "string", "enum": ["a", "b"]}, self.resolver)
         assert ir.enum == ["a", "b"]
 
-    def test_composition_one_of(self) -> None:
-        ir = _schema_to_ir(
+    async def test_composition_one_of(self) -> None:
+        ir = await _schema_to_ir(
             {"oneOf": [{"type": "string"}, {"type": "integer"}]},
             self.resolver,
         )
         assert len(ir.one_of) == 2
 
-    def test_ref_resolution(self) -> None:
+    async def test_ref_resolution(self) -> None:
         doc = {
             "components": {
                 "schemas": {
@@ -225,7 +225,7 @@ class TestSchemaToIr:
             }
         }
         resolver = RefResolver(doc)
-        ir = _schema_to_ir({"$ref": "#/components/schemas/Name"}, resolver)
+        ir = await _schema_to_ir({"$ref": "#/components/schemas/Name"}, resolver)
         assert ir.type == "string"
         assert ir.ref_name == "Name"
 

@@ -126,13 +126,14 @@ class TestRegistryRegistration:
     async def test_unregister_server(self) -> None:
         registry = MCPToolRegistry()
         await registry.register_server("github", _make_session(["list_issues"]))
-        assert registry.unregister_server("github") is True
+        assert await registry.unregister_server("github") is True
         assert "github" not in registry.registered_servers()
         assert "github:list_issues" not in registry.registered_tools()
 
-    def test_unregister_unknown_server_returns_false(self) -> None:
+    @pytest.mark.asyncio
+    async def test_unregister_unknown_server_returns_false(self) -> None:
         registry = MCPToolRegistry()
-        assert registry.unregister_server("nonexistent") is False
+        assert await registry.unregister_server("nonexistent") is False
 
 
 # ---------------------------------------------------------------------------
@@ -209,7 +210,7 @@ class TestManualRegistration:
         dummy_tool = MagicMock(spec=StructuredTool)
         dummy_tool.name = "manual_tool"
 
-        name = registry.register_tool("svc", dummy_tool)
+        name = await registry.register_tool("svc", dummy_tool)
         assert name == "svc:manual_tool"
         assert registry.get_tool("svc:manual_tool") is dummy_tool
 
@@ -221,7 +222,7 @@ class TestManualRegistration:
         dummy_tool = MagicMock(spec=StructuredTool)
         dummy_tool.name = "svc:my_tool"
 
-        name = registry.register_tool("svc", dummy_tool)
+        name = await registry.register_tool("svc", dummy_tool)
         # Should not double-namespace
         assert name == "svc:my_tool"
 
@@ -456,7 +457,7 @@ class TestUsageStats:
         registry = MCPToolRegistry()
         dummy = MagicMock(spec=StructuredTool)
         dummy.name = "manual_tool"
-        registry.register_tool("svc", dummy)
+        await registry.register_tool("svc", dummy)
         # manually registered tool has no adapter
         stats = registry.get_usage_stats()
         assert "svc:manual_tool" not in stats
@@ -466,7 +467,7 @@ class TestUsageStats:
         registry = MCPToolRegistry()
         await registry.register_server("svc", _make_session(["list_items"]))
         assert "svc:list_items" in registry.get_usage_stats()
-        registry.unregister_server("svc")
+        await registry.unregister_server("svc")
         assert "svc:list_items" not in registry.get_usage_stats()
 
 

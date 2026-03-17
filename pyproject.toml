@@ -107,6 +107,7 @@ markers = [
     "integration: Integration tests",
     "e2e: End-to-end tests",
     "orchestration: Orchestration layer tests",
+    "benchmark: Performance benchmark tests",
 ]
 
 [tool.coverage.run]

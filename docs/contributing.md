@@ -211,3 +211,15 @@ Open `http://127.0.0.1:8000` in your browser.
 - Open an issue on GitHub for bugs or feature requests
 - Start a Discussion for questions and ideas
 - Check existing issues and PRs before opening a new one
+
+---
+
+## Disclaimer
+
+API2MCP is an independent personal project created and maintained solely by
+[Manav Ghosh](https://github.com/manavghosh) in a personal capacity. It is not
+affiliated with, sponsored by, endorsed by, or in any way associated with any
+current or former employer, client, or organisation. All design decisions,
+source code, documentation, and expressed opinions are those of the author
+alone and do not represent the views or intellectual property of any third
+party.

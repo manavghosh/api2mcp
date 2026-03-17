@@ -68,7 +68,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 try:
-    from graphql import GraphQLSchema
+    from graphql import GraphQLSchema, Undefined
     from graphql import build_schema as _gql_build_schema
     from graphql.type import (
         GraphQLEnumType,
@@ -131,6 +131,7 @@ except ImportError:  # pragma: no cover
     def _gql_build_schema(_sdl: str) -> GraphQLSchema:  # type: ignore[misc]
         raise ImportError("graphql-core not installed")
 
+    Undefined = object()  # type: ignore[assignment]
     _HAS_GRAPHQL_CORE = False
 
 
@@ -301,7 +302,7 @@ def _arg_to_parameter(arg_name: str, arg: Any) -> Parameter:
     schema.description = arg.description or schema.description
 
     default: Any = None
-    if arg.default_value_is_set:
+    if arg.default_value is not Undefined:
         try:
             default = arg.default_value
         except Exception as exc:
@@ -379,7 +380,7 @@ def _field_to_endpoint(
         request_body=request_body,
         responses=responses,
         tags=tags,
-        deprecated=field.is_deprecated,
+        deprecated=bool(field.deprecation_reason),
         metadata=metadata,
     )
 

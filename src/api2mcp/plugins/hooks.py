@@ -103,6 +103,8 @@ class HookManager:
 
     def __init__(self) -> None:
         self._hooks: dict[str, list[HookRegistration]] = defaultdict(list)
+        import threading as _threading
+        self._lock = _threading.Lock()  # sync lock — register/unregister are sync; emit snapshots under lock
 
     # ------------------------------------------------------------------
     # Registration
@@ -128,9 +130,10 @@ class HookManager:
             The :class:`HookRegistration` that was created.
         """
         reg = HookRegistration(hook=event, callback=callback, plugin_id=plugin_id, priority=priority)
-        self._hooks[event].append(reg)
-        # Keep sorted by priority
-        self._hooks[event].sort(key=lambda r: r.priority)
+        with self._lock:
+            self._hooks[event].append(reg)
+            # Keep sorted by priority
+            self._hooks[event].sort(key=lambda r: r.priority)
         log.debug("Registered hook %r for plugin %r (priority=%d)", event, plugin_id, priority)
         return reg
 
@@ -143,12 +146,13 @@ class HookManager:
         Returns:
             ``True`` if found and removed, ``False`` otherwise.
         """
-        bucket = self._hooks.get(registration.hook, [])
-        try:
-            bucket.remove(registration)
-            return True
-        except ValueError:
-            return False
+        with self._lock:
+            bucket = self._hooks.get(registration.hook, [])
+            try:
+                bucket.remove(registration)
+                return True
+            except ValueError:
+                return False
 
     # ------------------------------------------------------------------
     # Emission
@@ -169,7 +173,9 @@ class HookManager:
             List of return values from each callback (``None`` values included).
         """
         results: list[Any] = []
-        for reg in list(self._hooks.get(event, [])):
+        with self._lock:
+            hooks = list(self._hooks.get(event, []))
+        for reg in hooks:
             try:
                 if inspect.iscoroutinefunction(reg.callback):
                     result = await reg.callback(**kwargs)

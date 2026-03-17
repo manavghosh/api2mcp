@@ -188,7 +188,6 @@ class TestPoolEviction:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.asyncio
 class TestHealthChecks:
     @respx.mock
     async def test_health_check_all_healthy(self) -> None:

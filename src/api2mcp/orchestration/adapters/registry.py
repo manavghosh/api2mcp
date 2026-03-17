@@ -31,6 +31,7 @@ Pattern filtering::
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import fnmatch
 import logging
@@ -161,6 +162,8 @@ class MCPToolRegistry:
         self._configs: dict[str, ServerConfig] = {}
         # manages subprocess lifecycles for config-based connections
         self._exit_stack: contextlib.AsyncExitStack = contextlib.AsyncExitStack()
+        # protects concurrent mutations to internal dicts
+        self._lock: asyncio.Lock = asyncio.Lock()
 
     # ------------------------------------------------------------------
     # Async context manager
@@ -186,7 +189,8 @@ class MCPToolRegistry:
         Args:
             config: Server configuration to store.
         """
-        self._configs[config.name] = config
+        async with self._lock:
+            self._configs[config.name] = config
         logger.debug("Registered config for server '%s'", config.name)
 
     async def connect_server(self, name: str) -> Any:
@@ -253,9 +257,10 @@ class MCPToolRegistry:
         Skips servers that are already connected.  Errors from individual
         servers are logged and re-raised immediately.
         """
-        for name in list(self._configs):
-            if name not in self._sessions:
-                await self.connect_server(name)
+        async with self._lock:
+            pending = [name for name in self._configs if name not in self._sessions]
+        for name in pending:
+            await self.connect_server(name)
 
     # ------------------------------------------------------------------
     # Session-based (eager) registration
@@ -288,11 +293,13 @@ class MCPToolRegistry:
         timeout = timeout_seconds if timeout_seconds is not None else self._default_timeout
         retries = retry_count if retry_count is not None else self._default_retry_count
 
-        self._sessions[server_name] = session
+        # Perform async I/O outside the lock to avoid holding it across awaits.
         list_result = await session.list_tools()
         mcp_tools = list_result.tools
 
         registered: list[str] = []
+        new_adapters: dict[str, MCPToolAdapter] = {}
+        new_tools: dict[str, StructuredTool] = {}
         for mcp_tool in mcp_tools:
             schema: dict[str, Any] = mcp_tool.inputSchema if mcp_tool.inputSchema else {}
             args_schema = _json_schema_to_pydantic(mcp_tool.name, schema)
@@ -312,18 +319,24 @@ class MCPToolRegistry:
                 timeout_seconds=timeout,
                 retry_count=retries,
             )
-            self._adapters[namespaced_name] = adapter
-            self._tools[namespaced_name] = adapter.to_structured_tool()
+            new_adapters[namespaced_name] = adapter
+            new_tools[namespaced_name] = adapter.to_structured_tool()
             registered.append(namespaced_name)
             logger.debug("Registered tool '%s'", namespaced_name)
 
-        self._server_tool_names[server_name] = registered
+        # Commit all dict mutations atomically under the lock.
+        async with self._lock:
+            self._sessions[server_name] = session
+            self._adapters.update(new_adapters)
+            self._tools.update(new_tools)
+            self._server_tool_names[server_name] = registered
+
         logger.info(
             "Registered %d tool(s) from server '%s'", len(registered), server_name
         )
         return registered
 
-    def register_tool(
+    async def register_tool(
         self,
         server_name: str,
         tool: StructuredTool,
@@ -344,11 +357,12 @@ class MCPToolRegistry:
         else:
             namespaced = f"{server_name}:{tool.name}"
 
-        self._tools[namespaced] = tool
-        self._server_tool_names.setdefault(server_name, []).append(namespaced)
+        async with self._lock:
+            self._tools[namespaced] = tool
+            self._server_tool_names.setdefault(server_name, []).append(namespaced)
         return namespaced
 
-    def unregister_server(self, server_name: str) -> bool:
+    async def unregister_server(self, server_name: str) -> bool:
         """Remove all tools, adapters, and the session for *server_name*.
 
         Note: Subprocess connections established via :meth:`connect_server`
@@ -358,14 +372,16 @@ class MCPToolRegistry:
         Returns:
             ``True`` if the server was registered, ``False`` otherwise.
         """
-        if server_name not in self._sessions:
-            return False
+        async with self._lock:
+            if server_name not in self._sessions:
+                return False
 
-        del self._sessions[server_name]
-        for name in self._server_tool_names.pop(server_name, []):
-            self._tools.pop(name, None)
-            self._adapters.pop(name, None)
-        self._configs.pop(server_name, None)
+            del self._sessions[server_name]
+            for name in self._server_tool_names.pop(server_name, []):
+                self._tools.pop(name, None)
+                self._adapters.pop(name, None)
+            self._configs.pop(server_name, None)
+
         logger.info("Unregistered server '%s'", server_name)
         return True
 

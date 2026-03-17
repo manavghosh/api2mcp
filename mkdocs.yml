@@ -78,6 +78,8 @@ nav:
     - GitHub Issues: examples/github.md
     - Stripe Payments: examples/stripe.md
     - Multi-API Workflow: examples/multi-api.md
+  - Security:
+    - Threat Model: threat-model.md
   - Contributing: contributing.md
 
 extra:
