@@ -1,6 +1,6 @@
 site_name: API2MCP
 site_description: Convert any REST/GraphQL API into a fully functional MCP server with LangGraph orchestration
-site_url: https://manavghosh.github.io/api2mcp
+site_url: https://manavghosh.github.io/api2mcp/
 repo_url: https://github.com/manavghosh/api2mcp
 repo_name: api2mcp
 edit_uri: edit/main/docs/
