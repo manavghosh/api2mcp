@@ -518,7 +518,13 @@ class TestIntrospectionParser:
 @pytestmark_gql
 class TestScalarMapping:
     def _get_scalar_schema(self, scalar_name: str):
-        from graphql import GraphQLBoolean, GraphQLFloat, GraphQLID, GraphQLInt, GraphQLString
+        from graphql import (
+            GraphQLBoolean,
+            GraphQLFloat,
+            GraphQLID,
+            GraphQLInt,
+            GraphQLString,
+        )
         from graphql.type import GraphQLScalarType
 
         _builtins = {

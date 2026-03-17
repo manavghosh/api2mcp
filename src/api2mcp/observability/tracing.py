@@ -51,8 +51,12 @@ def setup_tracing(
         # Re-check inside the lock (double-checked locking pattern).
         if _tracer_provider is not None:
             return
-        from opentelemetry.sdk.resources import Resource  # type: ignore[import-not-found]
-        from opentelemetry.sdk.trace import TracerProvider  # type: ignore[import-not-found]
+        from opentelemetry.sdk.resources import (
+            Resource,  # type: ignore[import-not-found]
+        )
+        from opentelemetry.sdk.trace import (
+            TracerProvider,  # type: ignore[import-not-found]
+        )
         resource = Resource.create({"service.name": service_name})
         _tracer_provider = TracerProvider(resource=resource)
         _otel_trace.set_tracer_provider(_tracer_provider)
