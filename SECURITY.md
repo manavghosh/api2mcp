@@ -1,5 +1,7 @@
 # Security Policy
 
+For a comprehensive security analysis, see [THREAT_MODEL.md](THREAT_MODEL.md).
+
 ## Supported Versions
 
 | Version | Supported |
@@ -93,3 +95,15 @@ We follow responsible disclosure. Once a fix is available, we will:
 - Use the `keyring` backend for secret storage in production deployments
 - Run `pip audit` periodically to check for known vulnerabilities in dependencies
 - Enable Dependabot alerts on any fork of this repository
+
+---
+
+## Disclaimer
+
+API2MCP is an independent personal project created and maintained solely by
+[Manav Ghosh](https://github.com/manavghosh) in a personal capacity. It is not
+affiliated with, sponsored by, endorsed by, or in any way associated with any
+current or former employer, client, or organisation. All design decisions,
+source code, documentation, and expressed opinions are those of the author
+alone and do not represent the views or intellectual property of any third
+party.

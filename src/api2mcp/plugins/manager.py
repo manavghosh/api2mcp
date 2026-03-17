@@ -12,6 +12,7 @@ Usage::
 from __future__ import annotations
 
 import logging
+import threading
 from pathlib import Path
 
 from api2mcp.plugins.base import BasePlugin
@@ -43,6 +44,7 @@ class PluginManager:
         self._sandbox = sandbox
         self._hooks = HookManager()
         self._loaded: list[BasePlugin] = []
+        self._lock = threading.Lock()  # sync lock — PluginManager lifecycle methods are synchronous
 
     # ------------------------------------------------------------------
     # Properties
@@ -76,7 +78,8 @@ class PluginManager:
         for plugin in ordered:
             try:
                 plugin.setup(self._hooks)
-                self._loaded.append(plugin)
+                with self._lock:
+                    self._loaded.append(plugin)
                 log.info("Loaded plugin: %s %s", plugin.id, plugin.version)
             except Exception as exc:
                 log.error("Plugin %r setup failed: %s", plugin.id, exc)
@@ -99,13 +102,16 @@ class PluginManager:
     def unload_all(self) -> None:
         """Call :meth:`~api2mcp.plugins.base.BasePlugin.teardown` on all plugins
         and clear the hooks."""
-        for plugin in reversed(self._loaded):
+        with self._lock:
+            plugins_snapshot = list(reversed(self._loaded))
+        for plugin in plugins_snapshot:
             try:
                 plugin.teardown()
                 log.info("Unloaded plugin: %s", plugin.id)
             except Exception as exc:
                 log.warning("Plugin %r teardown raised: %s", plugin.id, exc)
-        self._loaded.clear()
+        with self._lock:
+            self._loaded.clear()
         self._hooks.clear()
 
     def get_plugin(self, plugin_id: str) -> BasePlugin | None:

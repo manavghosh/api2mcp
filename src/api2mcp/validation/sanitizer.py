@@ -6,6 +6,7 @@ Detects the following attack categories in string field values:
 - Command injection  (shell metacharacters: ``;``, ``|``, ``&``, backtick, ``$(``
 - SQL injection  (``' OR``, ``UNION SELECT``, comment sequences ``--``, ``/*``)
 - XSS  (``<script>``, ``javascript:``, ``on*=`` event attributes)
+- CRLF injection  (``\\r\\n``, ``%0d%0a`` — HTTP header splitting)
 
 Each category is independently configurable.  Detection raises
 :class:`~api2mcp.validation.exceptions.InjectionDetectedError`; no input is
@@ -31,7 +32,9 @@ from api2mcp.validation.exceptions import InjectionDetectedError
 _PATH_TRAVERSAL_RE = re.compile(
     r"(\.\.[/\\])|"          # ../  ..\
     r"(^[/\\])|"             # Leading / or \
-    r"(%2e%2e[%2f%5c])",     # URL-encoded ../
+    r"(%2e%2e[%2f%5c])|"    # Fully URL-encoded ../  or ..\
+    r"(\.\.%2[fF])|"         # Literal .. with URL-encoded /
+    r"(\.\.%5[cC])",         # Literal .. with URL-encoded \
     re.IGNORECASE,
 )
 
@@ -63,6 +66,14 @@ _XSS_RE = re.compile(
     re.IGNORECASE,
 )
 
+_CRLF_RE = re.compile(
+    r"\r\n|\r|"                          # Literal CRLF or bare CR (header injection vectors)
+    r"%0[dD]%0[aA]|"                     # URL-encoded CRLF
+    r"%0[dD]",                           # URL-encoded CR alone
+    # Note: bare \n is intentionally allowed — multiline text content is legitimate;
+    # only CR (or CRLF) sequences enable HTTP header splitting (RFC 7230 §3.5).
+)
+
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -80,6 +91,7 @@ class SanitizerConfig:
     check_command_injection: bool = True
     check_sql_injection: bool = True
     check_xss: bool = True
+    check_crlf: bool = True  # HTTP header splitting / log injection
     sanitize_html: bool = False  # Escape HTML entities (off by default)
 
 
@@ -112,6 +124,9 @@ def check_string(
 
     if config.check_xss and _XSS_RE.search(value):
         raise InjectionDetectedError(field=field, attack_type="XSS")
+
+    if config.check_crlf and _CRLF_RE.search(value):
+        raise InjectionDetectedError(field=field, attack_type="CRLF injection")
 
     if config.sanitize_html:
         return html.escape(value, quote=True)

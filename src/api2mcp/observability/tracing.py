@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import threading
 from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any
@@ -19,6 +20,7 @@ except ImportError:
     pass
 
 _tracer_provider: Any = None
+_setup_lock = threading.Lock()
 
 
 def setup_tracing(
@@ -42,12 +44,19 @@ def setup_tracing(
     if not _HAS_OTEL:
         logger.debug("opentelemetry not installed — tracing disabled")
         return
-    from opentelemetry.sdk.resources import Resource  # type: ignore[import-not-found]
-    from opentelemetry.sdk.trace import TracerProvider  # type: ignore[import-not-found]
-    resource = Resource.create({"service.name": service_name})
-    _tracer_provider = TracerProvider(resource=resource)
-    _otel_trace.set_tracer_provider(_tracer_provider)
-    logger.info("Tracing: configured service=%r exporter=%r", service_name, exporter)
+    # Fast path: already configured — skip lock acquisition.
+    if _tracer_provider is not None:
+        return
+    with _setup_lock:
+        # Re-check inside the lock (double-checked locking pattern).
+        if _tracer_provider is not None:
+            return
+        from opentelemetry.sdk.resources import Resource  # type: ignore[import-not-found]
+        from opentelemetry.sdk.trace import TracerProvider  # type: ignore[import-not-found]
+        resource = Resource.create({"service.name": service_name})
+        _tracer_provider = TracerProvider(resource=resource)
+        _otel_trace.set_tracer_provider(_tracer_provider)
+        logger.info("Tracing: configured service=%r exporter=%r", service_name, exporter)
 
 
 def get_tracer(name: str) -> Any:

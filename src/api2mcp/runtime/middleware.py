@@ -10,6 +10,7 @@ Provides cross-cutting concerns for tool execution:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import time
@@ -44,6 +45,9 @@ class CallMetrics:
     error_count: int = 0
     total_duration_ms: float = 0.0
     calls_by_tool: dict[str, int] = field(default_factory=lambda: defaultdict(int))
+
+    def __post_init__(self) -> None:
+        self._lock = asyncio.Lock()
 
     @property
     def avg_duration_ms(self) -> float:
@@ -93,8 +97,9 @@ class MiddlewareStack:
 
         async def wrapped(name: str, arguments: dict[str, Any] | None) -> list[TextContent]:
             start = time.monotonic()
-            self.metrics.total_calls += 1
-            self.metrics.calls_by_tool[name] += 1
+            async with self.metrics._lock:
+                self.metrics.total_calls += 1
+                self.metrics.calls_by_tool[name] += 1
 
             if self._enable_logging:
                 logger.info("Tool call: %s (args=%s)", name, _summarize_args(arguments))
