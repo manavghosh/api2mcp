@@ -189,3 +189,15 @@ Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) and 
 ## License
 
 MIT License - see [LICENSE](./LICENSE) for details.
+
+---
+
+## Disclaimer
+
+API2MCP is an independent personal project created and maintained solely by
+[Manav Ghosh](https://github.com/manavghosh) in a personal capacity. It is not
+affiliated with, sponsored by, endorsed by, or in any way associated with any
+current or former employer, client, or organisation. All design decisions,
+source code, documentation, and expressed opinions are those of the author
+alone and do not represent the views or intellectual property of any third
+party.
